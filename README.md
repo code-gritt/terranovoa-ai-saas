@@ -1,7 +1,7 @@
 
 ---
 
-# Nextjs landing page templates (Nextjs + Tailwind CSS)
+# Nextjs landing page template (Nextjs + Tailwind CSS)
 
 A sleek and modern SaaS template built with **Next.js**, **Tailwind CSS**, and optimized for performance and developer experience. Perfect for startups, SaaS apps, admin panels, and internal tools.
 
