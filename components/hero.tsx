@@ -1,6 +1,6 @@
-import Image from "next/image"
-import { ArrowRight } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import Image from "next/image";
+import { ArrowRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Hero() {
   return (
@@ -10,10 +10,24 @@ export default function Hero() {
 
       {/* Background SVG pattern */}
       <div className="absolute inset-0 opacity-20">
-        <svg className="h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+        <svg
+          className="h-full w-full"
+          viewBox="0 0 100 100"
+          preserveAspectRatio="none"
+        >
           <defs>
-            <pattern id="grid" width="8" height="8" patternUnits="userSpaceOnUse">
-              <path d="M 8 0 L 0 0 0 8" fill="none" stroke="rgba(255,255,255,0.2)" strokeWidth="0.5" />
+            <pattern
+              id="grid"
+              width="8"
+              height="8"
+              patternUnits="userSpaceOnUse"
+            >
+              <path
+                d="M 8 0 L 0 0 0 8"
+                fill="none"
+                stroke="rgba(255,255,255,0.2)"
+                strokeWidth="0.5"
+              />
             </pattern>
           </defs>
           <rect width="100%" height="100%" fill="url(#grid)" />
@@ -23,13 +37,15 @@ export default function Hero() {
       <div className="container relative px-4 md:px-8">
         <div className="mx-auto max-w-5xl text-center">
           <div className="mb-6 mx-auto max-w-4xl inline-block rounded-full bg-gray-800 px-4 py-1 text-sm">
-            <span className="text-purple-400">New</span> — Our platform just got a major upgrade
+            <span className="text-purple-400">New</span> — Our platform just got
+            a major upgrade
           </div>
           <h1 className="mb-6 mx-auto max-w-4xl bg-gradient-to-r from-white to-gray-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-6xl">
             Streamline Your Workflow with Our SaaS Solution
           </h1>
           <p className="mb-10 mx-auto max-w-3xl text-xl text-gray-400 md:text-2xl">
-            Boost productivity and simplify operations with our powerful, easy-to-use platform.
+            Boost productivity and simplify operations with our powerful,
+            easy-to-use platform.
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:justify-center">
             <Button className="bg-purple-600 text-white hover:bg-purple-700 h-12 px-8 text-base">
@@ -61,5 +77,5 @@ export default function Hero() {
         </div>
       </div>
     </section>
-  )
+  );
 }

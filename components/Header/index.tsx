@@ -1,76 +1,93 @@
-"use client"
+"use client";
 
-import { useState, useRef, useEffect } from "react"
-import DesktopNav from "./DesktopNav"
-import MobileMenu from "./MobileMenu"
-import Logo from "./Logo"
-import HeaderActions from "./HeaderActions"
+import { useState, useRef, useEffect } from "react";
+import DesktopNav from "./DesktopNav";
+import MobileMenu from "./MobileMenu";
+import Logo from "./Logo";
+import HeaderActions from "./HeaderActions";
 // Add missing icon imports
-import { Menu, X, ChevronDown, Laptop, Users, BarChart3, Settings, HelpCircle, FileText, Zap } from "lucide-react"
+import {
+  Menu,
+  X,
+  ChevronDown,
+  Laptop,
+  Users,
+  BarChart3,
+  Settings,
+  HelpCircle,
+  FileText,
+  Zap,
+} from "lucide-react";
 
 export default function Header() {
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
-  const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null)
-  const [indicatorStyle, setIndicatorStyle] = useState({ width: 0, left: 0, opacity: 0 })
-  const [isHoveringMenu, setIsHoveringMenu] = useState(false)
-  const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null)
-  const navRefs = useRef<Record<string, HTMLDivElement | null>>({})
-  const megaMenuRef = useRef<HTMLDivElement>(null)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [activeMegaMenu, setActiveMegaMenu] = useState<string | null>(null);
+  const [indicatorStyle, setIndicatorStyle] = useState({
+    width: 0,
+    left: 0,
+    opacity: 0,
+  });
+  const [isHoveringMenu, setIsHoveringMenu] = useState(false);
+  const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const navRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const megaMenuRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     return () => {
       if (menuTimeoutRef.current) {
-        clearTimeout(menuTimeoutRef.current)
+        clearTimeout(menuTimeoutRef.current);
       }
-    }
-  }, [])
+    };
+  }, []);
 
   const handleMouseEnter = (menuId: string) => {
     if (menuTimeoutRef.current) {
-      clearTimeout(menuTimeoutRef.current)
+      clearTimeout(menuTimeoutRef.current);
     }
-    setActiveMegaMenu(menuId)
+    setActiveMegaMenu(menuId);
 
-    const navElement = navRefs.current[menuId]
+    const navElement = navRefs.current[menuId];
     if (navElement) {
-      const rect = navElement.getBoundingClientRect()
-      const parentRect = navElement.parentElement?.getBoundingClientRect() || { left: 0 }
+      const rect = navElement.getBoundingClientRect();
+      const parentRect = navElement.parentElement?.getBoundingClientRect() || {
+        left: 0,
+      };
 
       setIndicatorStyle({
         width: rect.width,
         left: rect.left - parentRect.left,
         opacity: 1,
-      })
+      });
     }
-  }
+  };
 
   const handleMouseLeave = () => {
     if (menuTimeoutRef.current) {
-      clearTimeout(menuTimeoutRef.current)
+      clearTimeout(menuTimeoutRef.current);
     }
 
     if (!isHoveringMenu) {
       menuTimeoutRef.current = setTimeout(() => {
-        setActiveMegaMenu(null)
-        setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }))
-      }, 300)
+        setActiveMegaMenu(null);
+        setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }));
+      }, 300);
     }
-  }
+  };
 
   const handleMenuMouseEnter = () => {
     if (menuTimeoutRef.current) {
-      clearTimeout(menuTimeoutRef.current)
+      clearTimeout(menuTimeoutRef.current);
     }
-    setIsHoveringMenu(true)
-  }
+    setIsHoveringMenu(true);
+  };
 
   const handleMenuMouseLeave = () => {
-    setIsHoveringMenu(false)
+    setIsHoveringMenu(false);
     menuTimeoutRef.current = setTimeout(() => {
-      setActiveMegaMenu(null)
-      setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }))
-    }, 300)
-  }
+      setActiveMegaMenu(null);
+      setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }));
+    }, 300);
+  };
 
   const megaMenus = {
     products: {
@@ -160,14 +177,24 @@ export default function Header() {
         {
           title: "Learning",
           items: [
-            { icon: <Laptop className="h-5 w-5" />, title: "Tutorials", description: "Step-by-step guides", href: "#" },
+            {
+              icon: <Laptop className="h-5 w-5" />,
+              title: "Tutorials",
+              description: "Step-by-step guides",
+              href: "#",
+            },
             {
               icon: <Zap className="h-5 w-5" />,
               title: "Webinars",
               description: "Live and recorded sessions",
               href: "#",
             },
-            { icon: <FileText className="h-5 w-5" />, title: "Blog", description: "Latest news and tips", href: "#" },
+            {
+              icon: <FileText className="h-5 w-5" />,
+              title: "Blog",
+              description: "Latest news and tips",
+              href: "#",
+            },
           ],
         },
       ],
@@ -179,7 +206,7 @@ export default function Header() {
         imageSrc: "/images/webinar.png",
       },
     },
-  }
+  };
 
   return (
     <header className="sticky top-0 z-40 border-b border-gray-800 bg-gray-950/80 backdrop-blur-md shadow-lg">
@@ -203,5 +230,5 @@ export default function Header() {
       </div>
       <MobileMenu isMenuOpen={isMenuOpen} setIsMenuOpen={setIsMenuOpen} />
     </header>
-  )
+  );
 }
