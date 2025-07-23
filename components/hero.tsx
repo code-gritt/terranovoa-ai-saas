@@ -41,7 +41,7 @@ export default function Hero() {
             a major upgrade
           </div>
           <h1 className="mb-6 mx-auto max-w-4xl bg-gradient-to-r from-white to-gray-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-6xl">
-            Streamline Your Workflow with Our SaaS Solution
+            Streamline Your Workflow with Our SaaS Solutions
           </h1>
           <p className="mb-10 mx-auto max-w-3xl text-xl text-gray-400 md:text-2xl">
             Boost productivity and simplify operations with our powerful,
