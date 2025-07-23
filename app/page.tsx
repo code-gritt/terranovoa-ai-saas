@@ -126,9 +126,9 @@ export default function LandingPage() {
       <LazyLoad>
         <Faq />
       </LazyLoad>
-      <LazyLoad>
+      {/* <LazyLoad>
         <BlogPreview />
-      </LazyLoad>
+      </LazyLoad> */}
       <LazyLoad>
         <Cta />
       </LazyLoad>

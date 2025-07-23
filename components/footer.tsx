@@ -1,5 +1,5 @@
-import Link from "next/link"
-import { Twitter, Facebook, Instagram, Linkedin, Github } from "lucide-react"
+import Link from "next/link";
+import { Twitter, Facebook, Instagram, Linkedin, Github } from "lucide-react";
 
 export default function Footer() {
   return (
@@ -7,14 +7,21 @@ export default function Footer() {
       <div className="container px-4 md:px-8">
         <div className="grid gap-8 md:grid-cols-4">
           <div>
-            <Link href="/" className="flex items-center gap-2 font-bold text-xl">
-              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-purple-600 text-white">S</div>
+            <Link
+              href="/"
+              className="flex items-center gap-2 font-bold text-xl"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-md bg-purple-600 text-white">
+                T
+              </div>
               <span className="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
-                SaasPro
+                TerraNovoa AI
               </span>
             </Link>
-            <p className="mt-4 text-gray-400">Empowering businesses with powerful software solutions since 2023.</p>
-            <div className="mt-6 flex space-x-4">
+            <p className="mt-4 text-gray-400">
+              Empowering renewable energy and geospatial innovation since 2024.
+            </p>
+            {/* <div className="mt-6 flex space-x-4">
               <Link href="#" className="text-gray-400 hover:text-white">
                 <Twitter className="h-5 w-5" />
                 <span className="sr-only">Twitter</span>
@@ -35,10 +42,12 @@ export default function Footer() {
                 <Github className="h-5 w-5" />
                 <span className="sr-only">GitHub</span>
               </Link>
-            </div>
+            </div> */}
           </div>
           <div>
-            <h3 className="mb-4 text-sm font-bold uppercase text-gray-300">Product</h3>
+            <h3 className="mb-4 text-sm font-bold uppercase text-gray-300">
+              Product
+            </h3>
             <ul className="flex flex-col gap-2">
               <li>
                 <Link href="#" className="text-gray-400 hover:text-white">
@@ -63,7 +72,9 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="mb-4 text-sm font-bold uppercase text-gray-300">Company</h3>
+            <h3 className="mb-4 text-sm font-bold uppercase text-gray-300">
+              Company
+            </h3>
             <ul className="flex flex-col gap-2">
               <li>
                 <Link href="#" className="text-gray-400 hover:text-white">
@@ -88,7 +99,9 @@ export default function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="mb-4 text-sm font-bold uppercase text-gray-300">Legal</h3>
+            <h3 className="mb-4 text-sm font-bold uppercase text-gray-300">
+              Legal
+            </h3>
             <ul className="flex flex-col gap-2">
               <li>
                 <Link href="#" className="text-gray-400 hover:text-white">
@@ -109,9 +122,9 @@ export default function Footer() {
           </div>
         </div>
         <div className="mt-12 border-t border-gray-800 pt-8 text-center text-gray-400">
-          <p>© 2024 SaasPro. All rights reserved.</p>
+          <p>© 2025 TerraNovoa AI. All rights reserved.</p>
         </div>
       </div>
     </footer>
-  )
+  );
 }

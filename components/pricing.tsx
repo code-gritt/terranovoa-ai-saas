@@ -1,43 +1,48 @@
-import { CheckCircle } from "lucide-react"
-import { Button } from "@/components/ui/button"
+import { CheckCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 export default function Pricing() {
   const plans = [
     {
-      name: "Starter",
-      price: "$29",
-      description: "Perfect for small businesses and startups",
-      features: ["5 Team Members", "10GB Storage", "Basic Analytics", "Email Support"],
+      name: "Explorer",
+      price: "$49",
+      description: "Ideal for individual renewable energy enthusiasts",
+      features: [
+        "5 Projects",
+        "10GB Storage",
+        "Basic Geospatial Maps",
+        "Email Support",
+      ],
     },
     {
-      name: "Professional",
-      price: "$79",
-      description: "Ideal for growing businesses",
+      name: "Innovator",
+      price: "$99",
+      description: "Perfect for growing energy teams",
       features: [
-        "15 Team Members",
+        "15 Projects",
         "50GB Storage",
-        "Advanced Analytics",
+        "AI-Powered Insights",
         "Priority Support",
-        "API Access",
-        "Custom Integrations",
+        "Mapbox Integration",
+        "Custom Reports",
       ],
       popular: true,
     },
     {
-      name: "Enterprise",
-      price: "$149",
-      description: "For large organizations with complex needs",
+      name: "Visionary",
+      price: "$199",
+      description: "Tailored for large-scale energy organizations",
       features: [
-        "Unlimited Team Members",
+        "Unlimited Projects",
         "500GB Storage",
-        "Enterprise Analytics",
+        "Advanced AI Analytics",
         "24/7 Dedicated Support",
-        "Advanced Security",
+        "Enterprise Security",
         "Custom Development",
         "Onboarding Assistance",
       ],
     },
-  ]
+  ];
 
   return (
     <section id="pricing" className="relative py-20 md:py-32">
@@ -53,23 +58,42 @@ export default function Pricing() {
             patternUnits="userSpaceOnUse"
             patternContentUnits="userSpaceOnUse"
           >
-            <circle id="pattern-circle" cx="10" cy="10" r="1.6257413380501518" fill="#fff"></circle>
+            <circle
+              id="pattern-circle"
+              cx="10"
+              cy="10"
+              r="1.6257413380501518"
+              fill="#fff"
+            ></circle>
           </pattern>
-          <rect id="rect" x="0" y="0" width="100%" height="100%" fill="url(#pattern-circles)"></rect>
+          <rect
+            id="rect"
+            x="0"
+            y="0"
+            width="100%"
+            height="100%"
+            fill="url(#pattern-circles)"
+          ></rect>
         </svg>
       </div>
 
       <div className="container relative px-4 md:px-8">
         <div className="mx-auto max-w-2xl text-center">
-          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">Simple, Transparent Pricing</h2>
-          <p className="mb-16 text-lg text-gray-400">Choose the plan that works best for your business</p>
+          <h2 className="mb-4 text-3xl font-bold tracking-tight md:text-4xl">
+            Simple, Transparent Pricing
+          </h2>
+          <p className="mb-16 text-lg text-gray-400">
+            Choose the plan that powers your renewable energy vision
+          </p>
         </div>
         <div className="grid gap-8 md:grid-cols-3">
           {plans.map((plan, index) => (
             <div
               key={index}
               className={`flex flex-col rounded-xl border bg-gray-900/50 p-8 backdrop-blur-sm ${
-                plan.popular ? "border-2 border-purple-600 relative" : "border-gray-800"
+                plan.popular
+                  ? "border-2 border-purple-600 relative"
+                  : "border-gray-800"
               }`}
             >
               {plan.popular && (
@@ -107,5 +131,5 @@ export default function Pricing() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -6,29 +6,32 @@ import { ThemeProvider } from "@/components/theme-provider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata = {
-  title: "SaasPro - Modern SaaS Platform",
-  description: "Streamline your workflow with our powerful SaaS solution",
-  generator: "Mohamed Djoudir",
+  title: "TerraNovoa AI - Futuristic GIS Platform",
+  description:
+    "Revolutionize renewable energy with AI-powered geospatial mapping and insights",
+  generator: "Gokul",
   openGraph: {
-    title: "SaasPro - Modern SaaS Platform",
-    description: "Streamline your workflow with our powerful SaaS solution",
+    title: "TerraNovoa AI - Futuristic GIS Platform",
+    description:
+      "Revolutionize renewable energy with AI-powered geospatial mapping and insights",
     images: [
       {
-        url: '/image.png',
+        url: "/image.png",
         width: 1200,
         height: 630,
-        alt: 'SaasPro',
-      }
+        alt: "TerraNovoa AI",
+      },
     ],
-    type: 'website',
-    siteName: 'SaasPro',
+    type: "website",
+    siteName: "TerraNovoa AI",
   },
   twitter: {
-    card: 'summary_large_image',
-    title: "SaasPro - Modern SaaS Platform",
-    description: "Streamline your workflow with our powerful SaaS solution",
-    images: ['/image.png'],
-  }
+    card: "summary_large_image",
+    title: "TerraNovoa AI - Futuristic GIS Platform",
+    description:
+      "Revolutionize renewable energy with AI-powered geospatial mapping and insights",
+    images: ["/image.png"],
+  },
 };
 
 export default function RootLayout({

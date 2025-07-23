@@ -1,5 +1,5 @@
-import { Button } from "@/components/ui/button"
-import { ArrowRight } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import { ArrowRight } from "lucide-react";
 
 export default function Cta() {
   return (
@@ -12,17 +12,17 @@ export default function Cta() {
           <div className="bg-gray-900/90 border border-gray-800 rounded-xl p-8 md:p-10 relative overflow-hidden shadow-lg">
             {/* Simplified decorative elements - just one gradient */}
             <div className="absolute -top-32 -right-32 w-64 h-64 bg-gradient-to-br from-purple-600/20 to-pink-600/20 rounded-full blur-3xl"></div>
-            
+
             {/* Gradient border on left instead of top for visual interest */}
             <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-purple-600 to-pink-600 rounded-full"></div>
 
             <div className="relative flex flex-col md:flex-row items-center justify-between gap-8">
               <div className="md:max-w-xl">
                 <h2 className="text-2xl md:text-3xl font-bold mb-3">
-                  Ready to transform your business?
+                  Ready to empower your energy future?
                 </h2>
                 <p className="text-gray-300">
-                  Join thousands of companies already using our platform.
+                  Join hundreds of energy innovators using TerraNovoa AI.
                 </p>
               </div>
               <div>
@@ -35,20 +35,52 @@ export default function Cta() {
             {/* Simplified features row */}
             <div className="flex flex-wrap justify-center md:justify-start gap-6 mt-8 pt-6 border-t border-gray-800">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-5 h-5 text-purple-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
-                <span className="text-gray-300 text-sm">No credit card required</span>
+                <span className="text-gray-300 text-sm">
+                  No credit card required
+                </span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-5 h-5 text-purple-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
-                <span className="text-gray-300 text-sm">14-day free trial</span>
+                <span className="text-gray-300 text-sm">7-day free trial</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-purple-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+                <svg
+                  className="w-5 h-5 text-purple-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M5 13l4 4L19 7"
+                  />
                 </svg>
                 <span className="text-gray-300 text-sm">Cancel anytime</span>
               </div>
@@ -57,5 +89,5 @@ export default function Cta() {
         </div>
       </div>
     </section>
-  )
+  );
 }

@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import Image from "next/image"
-import { motion } from "framer-motion"
+import Image from "next/image";
+import { motion } from "framer-motion";
 
 export default function SocialProof() {
   const companies = [
@@ -11,14 +11,14 @@ export default function SocialProof() {
     { name: "Notion", logo: "https://cdn.simpleicons.org/notion" },
     { name: "Figma", logo: "https://cdn.simpleicons.org/figma" },
     { name: "Trello", logo: "https://cdn.simpleicons.org/trello" },
-  ]
+  ];
 
   const stats = [
     { value: "10k+", label: "Active Users" },
     { value: "500+", label: "Enterprise Clients" },
     { value: "99.9%", label: "Uptime" },
     { value: "24/7", label: "Support" },
-  ]
+  ];
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -28,7 +28,7 @@ export default function SocialProof() {
         staggerChildren: 0.1,
       },
     },
-  }
+  };
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
@@ -39,7 +39,7 @@ export default function SocialProof() {
         duration: 0.5,
       },
     },
-  }
+  };
 
   return (
     <section className="relative py-16 overflow-hidden">
@@ -54,8 +54,12 @@ export default function SocialProof() {
 
       <div className="container relative px-4 md:px-8">
         <div className="text-center mb-12">
-          <p className="text-lg text-purple-400 font-medium mb-2">Trusted by professionals from top brands </p>
-          <h2 className="text-2xl md:text-3xl font-bold">Join thousands of satisfied customers</h2>
+          <p className="text-lg text-purple-400 font-medium mb-2">
+            Trusted by professionals from top brands{" "}
+          </p>
+          <h2 className="text-2xl md:text-3xl font-bold">
+            Join thousands of satisfied customers
+          </h2>
         </div>
 
         {/* Company logos */}
@@ -103,5 +107,5 @@ export default function SocialProof() {
         </div>
       </div>
     </section>
-  )
+  );
 }
