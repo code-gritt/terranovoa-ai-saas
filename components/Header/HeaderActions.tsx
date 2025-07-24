@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { LayoutDashboard, Menu, X } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -57,6 +57,23 @@ export default function HeaderActions({
 
   return (
     <div className="flex items-center gap-4">
+      {user && (
+        <Link href="/dashboard">
+          <Button
+            variant="outline"
+            className="hidden md:inline-flex items-center gap-2 text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 hover:border-blue-600 dark:hover:border-blue-400 transition text-sm"
+          >
+            <LayoutDashboard className="h-4 w-4" />
+            Dashboard
+          </Button>
+          <Button
+            variant="ghost"
+            className="md:hidden w-8 sm:w-10 h-8 sm:h-10 p-0 text-gray-700 dark:text-gray-200"
+          >
+            <LayoutDashboard className="h-4 w-4" />
+          </Button>
+        </Link>
+      )}
       {user ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

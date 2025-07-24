@@ -1,74 +1,84 @@
 {
   "app\\page.tsx -> ../components/how-it-works": {
-    "id": "app\\page.tsx -> ../components/how-it-works",
+    "id": 1813,
     "files": [
-      "static/chunks/_app-pages-browser_components_how-it-works_index_tsx.js"
+      "static/chunks/923.903a431a089c9592.js",
+      "static/chunks/813.1e9a988e6a06e314.js"
     ]
   },
   "app\\page.tsx -> @/components/blog-preview": {
-    "id": "app\\page.tsx -> @/components/blog-preview",
+    "id": 5772,
     "files": [
-      "static/chunks/_app-pages-browser_components_blog-preview_tsx.js"
+      "static/chunks/772.e5ef743a7cd2e525.js"
     ]
   },
   "app\\page.tsx -> @/components/comparison-table": {
-    "id": "app\\page.tsx -> @/components/comparison-table",
+    "id": 9368,
     "files": [
-      "static/chunks/_app-pages-browser_components_comparison-table_tsx.js"
+      "static/chunks/368.724c78a56b9b34a9.js"
     ]
   },
   "app\\page.tsx -> @/components/cta": {
-    "id": "app\\page.tsx -> @/components/cta",
+    "id": 1115,
     "files": [
-      "static/chunks/_app-pages-browser_components_cta_tsx.js"
+      "static/chunks/115.c7a6170bac124643.js"
     ]
   },
   "app\\page.tsx -> @/components/faq": {
-    "id": "app\\page.tsx -> @/components/faq",
+    "id": 7985,
     "files": [
-      "static/chunks/_app-pages-browser_components_faq_tsx.js"
+      "static/chunks/923.903a431a089c9592.js",
+      "static/chunks/985.b1df3fc3ef2f4c18.js"
     ]
   },
   "app\\page.tsx -> @/components/features": {
-    "id": "app\\page.tsx -> @/components/features",
+    "id": 2159,
     "files": [
-      "static/chunks/_app-pages-browser_components_features_tsx.js"
+      "static/chunks/159.0b4a0568cbc4363f.js"
     ]
   },
   "app\\page.tsx -> @/components/footer": {
-    "id": "app\\page.tsx -> @/components/footer",
+    "id": 7746,
     "files": [
-      "static/chunks/_app-pages-browser_components_footer_tsx.js"
+      "static/chunks/746.7d214a3a016a821f.js"
     ]
   },
   "app\\page.tsx -> @/components/integrations": {
-    "id": "app\\page.tsx -> @/components/integrations",
+    "id": 7642,
     "files": [
-      "static/chunks/_app-pages-browser_components_integrations_tsx.js"
+      "static/chunks/923.903a431a089c9592.js",
+      "static/chunks/642.36a40ec7267c23dd.js"
     ]
   },
   "app\\page.tsx -> @/components/pricing": {
-    "id": "app\\page.tsx -> @/components/pricing",
+    "id": 6203,
     "files": [
-      "static/chunks/_app-pages-browser_components_pricing_tsx.js"
+      "static/chunks/203.4454b08798c6ad42.js"
     ]
   },
   "app\\page.tsx -> @/components/social-proof": {
-    "id": "app\\page.tsx -> @/components/social-proof",
+    "id": 183,
     "files": [
-      "static/chunks/_app-pages-browser_components_social-proof_tsx.js"
+      "static/chunks/923.903a431a089c9592.js",
+      "static/chunks/183.ec968b3a015a8317.js"
     ]
   },
   "app\\page.tsx -> @/components/testimonials": {
-    "id": "app\\page.tsx -> @/components/testimonials",
+    "id": 6379,
     "files": [
-      "static/chunks/_app-pages-browser_components_testimonials_tsx.js"
+      "static/chunks/379.8649766af280167e.js"
     ]
   },
-  "node_modules\\next\\dist\\client\\dev\\hot-reloader\\app\\use-websocket.js -> @vercel/turbopack-ecmascript-runtime/browser/dev/hmr-client/hmr-client.ts": {
-    "id": "node_modules\\next\\dist\\client\\dev\\hot-reloader\\app\\use-websocket.js -> @vercel/turbopack-ecmascript-runtime/browser/dev/hmr-client/hmr-client.ts",
+  "node_modules\\next\\dist\\client\\index.js -> ../pages/_app": {
+    "id": 472,
     "files": [
-      "static/chunks/_app-pages-browser_node_modules_next_dist_client_dev_noop-turbopack-hmr_js.js"
+      "static/chunks/472.a3826d29d6854395.js"
+    ]
+  },
+  "node_modules\\next\\dist\\client\\index.js -> ../pages/_error": {
+    "id": 9341,
+    "files": [
+      "static/chunks/341.716d46e6e5cb6bdc.js"
     ]
   }
 }
