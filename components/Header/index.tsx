@@ -18,6 +18,7 @@ import {
   FileText,
   Zap,
 } from "lucide-react";
+import { useSession } from "next-auth/react";
 
 export default function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -31,6 +32,7 @@ export default function Header() {
   const menuTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const navRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const megaMenuRef = useRef<HTMLDivElement>(null);
+  const { data: session, status } = useSession();
 
   useEffect(() => {
     return () => {
