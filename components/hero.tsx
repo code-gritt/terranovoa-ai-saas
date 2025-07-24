@@ -67,7 +67,7 @@ export default function Hero() {
             <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 opacity-70 blur"></div>
             <div className="relative rounded-xl border border-gray-800 bg-gray-900 shadow-2xl overflow-hidden">
               <video
-                src="/renew1.mp4"
+                src="/ren.mp4"
                 autoPlay
                 muted
                 loop
