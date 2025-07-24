@@ -4,6 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import dynamic from "next/dynamic";
 import Header from "@/components/Header";
 import Hero from "@/components/hero";
+import ClientWrapper from "@/components/client-wrapper";
 
 // Scroll restoration component
 const ScrollRestoration = () => {
@@ -98,43 +99,45 @@ function LazyLoad({ children }: { children: React.ReactNode }) {
 
 export default function LandingPage() {
   return (
-    <div className="flex flex-col bg-gray-950 text-gray-100 min-h-[11700px]">
-      <ScrollRestoration />
-      <Header />
-      <Hero />
-      <LazyLoad>
-        <SocialProof />
-      </LazyLoad>
-      <LazyLoad>
-        <Features />
-      </LazyLoad>
-      <LazyLoad>
-        <HowItWorks />
-      </LazyLoad>
-      <LazyLoad>
-        <Testimonials />
-      </LazyLoad>
-      <LazyLoad>
-        <Pricing />
-      </LazyLoad>
-      <LazyLoad>
-        <ComparisonTable />
-      </LazyLoad>
-      <LazyLoad>
-        <Integrations />
-      </LazyLoad>
-      <LazyLoad>
-        <Faq />
-      </LazyLoad>
-      {/* <LazyLoad>
+    <ClientWrapper>
+      <div className="flex flex-col bg-gray-950 text-gray-100 min-h-[11700px]">
+        <ScrollRestoration />
+        <Header />
+        <Hero />
+        <LazyLoad>
+          <SocialProof />
+        </LazyLoad>
+        <LazyLoad>
+          <Features />
+        </LazyLoad>
+        <LazyLoad>
+          <HowItWorks />
+        </LazyLoad>
+        <LazyLoad>
+          <Testimonials />
+        </LazyLoad>
+        <LazyLoad>
+          <Pricing />
+        </LazyLoad>
+        <LazyLoad>
+          <ComparisonTable />
+        </LazyLoad>
+        <LazyLoad>
+          <Integrations />
+        </LazyLoad>
+        <LazyLoad>
+          <Faq />
+        </LazyLoad>
+        {/* <LazyLoad>
         <BlogPreview />
       </LazyLoad> */}
-      <LazyLoad>
-        <Cta />
-      </LazyLoad>
-      <LazyLoad>
-        <Footer />
-      </LazyLoad>
-    </div>
+        <LazyLoad>
+          <Cta />
+        </LazyLoad>
+        <LazyLoad>
+          <Footer />
+        </LazyLoad>
+      </div>
+    </ClientWrapper>
   );
 }

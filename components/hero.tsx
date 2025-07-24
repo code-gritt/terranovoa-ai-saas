@@ -35,12 +35,12 @@ export default function Hero() {
       </div>
 
       <div className="container relative px-4 md:px-8">
-        <div className="mx-auto max-w-5xl text-center">
+        <div className="mx-auto max-w-7xl text-center">
           <div className="mb-6 mx-auto max-w-4xl inline-block rounded-full bg-gray-800 px-4 py-1 text-sm">
             <span className="text-cyan-400">New</span> — TerraNovoa AI is now
             live
           </div>
-          <h1 className="mb-6 mx-auto max-w-4xl bg-gradient-to-r from-white to-gray-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-6xl">
+          <h1 className="mb-6 mx-auto max-w-5xl bg-gradient-to-r from-white to-gray-400 bg-clip-text text-4xl font-bold tracking-tight text-transparent md:text-6xl">
             Revolutionize Renewable Energy with TerraNovoa AI
           </h1>
           <p className="mb-10 mx-auto max-w-3xl text-xl text-gray-400 md:text-2xl">
@@ -66,13 +66,13 @@ export default function Hero() {
           <div className="mt-16 relative">
             <div className="absolute -inset-1 rounded-xl bg-gradient-to-r from-cyan-600 to-purple-600 opacity-70 blur"></div>
             <div className="relative rounded-xl border border-gray-800 bg-gray-900 shadow-2xl overflow-hidden">
-              <Image
-                src="/images/hero.webp"
-                alt="TerraNovoa AI Dashboard Preview"
-                width={1200}
-                height={675}
+              <video
+                src="/renew1.mp4"
+                autoPlay
+                muted
+                loop
+                playsInline
                 className="w-full h-auto opacity-90"
-                priority
               />
               <div className="absolute inset-0 bg-gradient-to-t from-gray-950 via-transparent to-transparent"></div>
             </div>
