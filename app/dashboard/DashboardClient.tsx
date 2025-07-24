@@ -1,14 +1,6 @@
 "use client";
 
-import {
-  useState,
-  useEffect,
-  JSXElementConstructor,
-  Key,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-} from "react";
+import { useState, useEffect } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -22,6 +14,8 @@ import {
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
+import ClientWrapper from "@/components/client-wrapper";
+import Header from "@/components/Header";
 
 // Fix Leaflet default icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -80,29 +74,13 @@ export default function DashboardClient({
   });
 
   useEffect(() => {
-    const counts: {
-      Planning: number;
-      Active: number;
-      Completed: number;
-      "On Hold": number;
-    } = {
-      Planning: 0,
-      Active: 0,
-      Completed: 0,
-      "On Hold": 0,
-    };
-
-    for (const project of projects) {
-      if (
-        project.status === "Planning" ||
-        project.status === "Active" ||
-        project.status === "Completed" ||
-        project.status === "On Hold"
-      ) {
-        counts[project.status]++;
-      }
-    }
-
+    const counts = projects.reduce(
+      (acc, project) => {
+        acc[project.status] = (acc[project.status] || 0) + 1;
+        return acc;
+      },
+      { Planning: 0, Active: 0, Completed: 0, "On Hold": 0 }
+    );
     setStatusCounts(counts);
     setProjectCount(projects.length);
   }, [projects]);
@@ -135,131 +113,85 @@ export default function DashboardClient({
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-white mb-6">Dashboard</h1>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {/* User Overview */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-          <h2 className="text-xl font-semibold text-white mb-2">
-            User Overview
-          </h2>
-          <p className="text-gray-400">Welcome, {user.firstName || "User"}!</p>
-          <p className="text-gray-400">Email: {user.email}</p>
-          <p className="text-gray-400">Location: {user.location || "N/A"}</p>
-          <p className="text-gray-400">Skill Level: {user.skillLevel}</p>
-        </div>
+    <ClientWrapper>
+      <div className="flex flex-col bg-gray-950 text-gray-100 min-h-[11700px]">
+        <Header />
+        <section className="relative py-20 md:py-32">
+          {/* Background gradient */}
+          <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950"></div>
 
-        {/* Project Statistics */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-4">
-          <h2 className="text-xl font-semibold text-white mb-2">
-            Project Stats
-          </h2>
-          <p className="text-gray-400">Total Projects: {projectCount}</p>
-          <div className="mt-4 h-48">
-            <Bar data={chartData} options={chartOptions} />
+          <div className="container relative px-4 md:px-8">
+            <div className="grid gap-8 md:grid-cols-3">
+              {/* User Overview */}
+              <div className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
+                <h2 className="mb-2 text-xl font-bold">User Overview</h2>
+                <p className="text-gray-400">
+                  Welcome, {user.firstName || "User"}!
+                </p>
+                <p className="text-gray-400">Email: {user.email}</p>
+                <p className="text-gray-400">
+                  Location: {user.location || "N/A"}
+                </p>
+                <p className="text-gray-400">Skill Level: {user.skillLevel}</p>
+              </div>
+
+              {/* Project Statistics */}
+              <div className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
+                <h2 className="mb-2 text-xl font-bold">Project Stats</h2>
+                <p className="text-gray-400">Total Projects: {projectCount}</p>
+                <div className="mt-4 h-48">
+                  <Bar data={chartData} options={chartOptions} />
+                </div>
+              </div>
+
+              {/* Geospatial Map */}
+              <div className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
+                <h2 className="mb-2 text-xl font-bold">Project Locations</h2>
+                <MapContainer
+                  center={[20.5937, 78.9629]} // Centered on India
+                  zoom={5}
+                  style={{ height: "100%", width: "100%" }}
+                  className="rounded-lg overflow-hidden"
+                >
+                  <TileLayer
+                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                    attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                  />
+                  {projects.map((project) => {
+                    const [lat, lon] = project.location
+                      .split(",")
+                      .map(Number) || [0, 0];
+                    return (
+                      lat &&
+                      lon && (
+                        <Marker key={project.id} position={[lat, lon]}>
+                          <Popup>
+                            {project.name} <br /> Status: {project.status}
+                          </Popup>
+                        </Marker>
+                      )
+                    );
+                  })}
+                </MapContainer>
+              </div>
+            </div>
+
+            {/* AI Insights */}
+            <div className="mt-6 flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
+              <h2 className="mb-2 text-xl font-bold">AI Insights</h2>
+              <p className="text-gray-400">
+                Based on your projects, AI suggests optimizing solar farms in
+                Bangalore with an estimated 15% efficiency gain using current
+                weather patterns.
+              </p>
+              <p className="text-gray-400 mt-2">
+                (Note: This is a mock insight. Future updates will integrate
+                real-time AI analysis.)
+              </p>
+            </div>
           </div>
-        </div>
-
-        {/* Geospatial Map */}
-        <div className="bg-gray-900 border border-gray-800 rounded-lg p-4 h-64">
-          <h2 className="text-xl font-semibold text-white mb-2">
-            Project Locations
-          </h2>
-          <MapContainer
-            center={[20.5937, 78.9629]} // Centered on India
-            zoom={5}
-            style={{ height: "100%", width: "100%" }}
-            className="rounded-lg overflow-hidden"
-          >
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            {projects.map(
-              (project: {
-                location: string;
-                id: Key | null | undefined;
-                name:
-                  | string
-                  | number
-                  | bigint
-                  | boolean
-                  | ReactElement<unknown, string | JSXElementConstructor<any>>
-                  | Iterable<ReactNode>
-                  | ReactPortal
-                  | Promise<
-                      | string
-                      | number
-                      | bigint
-                      | boolean
-                      | ReactPortal
-                      | ReactElement<
-                          unknown,
-                          string | JSXElementConstructor<any>
-                        >
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined
-                    >
-                  | null
-                  | undefined;
-                status:
-                  | string
-                  | number
-                  | bigint
-                  | boolean
-                  | ReactElement<unknown, string | JSXElementConstructor<any>>
-                  | Iterable<ReactNode>
-                  | ReactPortal
-                  | Promise<
-                      | string
-                      | number
-                      | bigint
-                      | boolean
-                      | ReactPortal
-                      | ReactElement<
-                          unknown,
-                          string | JSXElementConstructor<any>
-                        >
-                      | Iterable<ReactNode>
-                      | null
-                      | undefined
-                    >
-                  | null
-                  | undefined;
-              }) => {
-                const [lat, lon] = project.location.split(",").map(Number) || [
-                  0, 0,
-                ];
-                return (
-                  lat &&
-                  lon && (
-                    <Marker key={project.id} position={[lat, lon]}>
-                      <Popup>
-                        {project.name} <br /> Status: {project.status}
-                      </Popup>
-                    </Marker>
-                  )
-                );
-              }
-            )}
-          </MapContainer>
-        </div>
+        </section>
       </div>
-
-      {/* AI Insights */}
-      <div className="mt-6 bg-gray-900 border border-gray-800 rounded-lg p-4">
-        <h2 className="text-xl font-semibold text-white mb-2">AI Insights</h2>
-        <p className="text-gray-400">
-          Based on your projects, AI suggests optimizing solar farms in
-          Bangalore with an estimated 15% efficiency gain using current weather
-          patterns.
-        </p>
-        <p className="text-gray-400 mt-2">
-          (Note: This is a mock insight. Future updates will integrate real-time
-          AI analysis.)
-        </p>
-      </div>
-    </div>
+    </ClientWrapper>
   );
 }
