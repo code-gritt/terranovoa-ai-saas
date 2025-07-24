@@ -17,6 +17,7 @@ import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
 import { useUserStore } from "@/lib/store";
 import { signOut } from "next-auth/react";
+
 export default function HeaderActions({
   isMenuOpen,
   setIsMenuOpen,
@@ -43,6 +44,10 @@ export default function HeaderActions({
     }
   }, [session, status, setUser, clearUser]);
 
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
   const getInitials = () => {
     if (!user) return "NA";
     const firstInitial = user.firstName?.charAt(0)?.toUpperCase() || "";
@@ -52,49 +57,40 @@ export default function HeaderActions({
 
   return (
     <div className="flex items-center gap-4">
-      {status === "unauthenticated" && (
-        <>
-          <Link
-            href="/login"
-            className="hidden md:block text-sm font-medium text-gray-300 hover:text-white px-2 py-1 rounded hover:bg-gray-900 transition"
-          >
-            Log in
-          </Link>
-          <Button className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:from-purple-700 hover:to-pink-600 shadow-md">
-            Get Started
-          </Button>
-        </>
-      )}
       {user ? (
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              variant="ghost"
               size="icon"
               className="rounded-full w-8 sm:w-10 h-8 sm:h-10 flex items-center justify-center bg-primary text-white dark:bg-gray-700"
             >
               {getInitials()}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className="w-48 sm:w-56">
-            <DropdownMenuLabel>My Account</DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem className="flex flex-col items-start text-sm">
-              <span className="font-medium">Email</span>
-              <span className="text-gray-500">{user.email}</span>
+          <DropdownMenuContent
+            className="w-48 sm:w-56 bg-gray-900 border border-gray-800 rounded-lg p-2 shadow-lg"
+            align="end"
+          >
+            <DropdownMenuLabel className="text-white font-medium">
+              My Account
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator className="bg-gray-800 my-1" />
+            <DropdownMenuItem className="flex flex-col items-start text-sm text-gray-400 hover:bg-gray-900 rounded-md p-2">
+              <span className="font-medium text-white">Email</span>
+              <span>{user.email}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex flex-col items-start text-sm">
-              <span className="font-medium">First Name</span>
-              <span className="text-gray-500">{user.firstName || "N/A"}</span>
+            <DropdownMenuItem className="flex flex-col items-start text-sm text-gray-400 hover:bg-gray-900 rounded-md p-2">
+              <span className="font-medium text-white">First Name</span>
+              <span>{user.firstName || "N/A"}</span>
             </DropdownMenuItem>
-            <DropdownMenuItem className="flex flex-col items-start text-sm">
-              <span className="font-medium">Last Name</span>
-              <span className="text-gray-500">{user.lastName || "N/A"}</span>
+            <DropdownMenuItem className="flex flex-col items-start text-sm text-gray-400 hover:bg-gray-900 rounded-md p-2">
+              <span className="font-medium text-white">Last Name</span>
+              <span>{user.lastName || "N/A"}</span>
             </DropdownMenuItem>
-            <DropdownMenuSeparator />
+            <DropdownMenuSeparator className="bg-gray-800 my-1" />
             <DropdownMenuItem
               onClick={() => signOut({ callbackUrl: "/login" })}
-              className="text-red-600 text-sm"
+              className="text-red-600 text-sm hover:bg-gray-900 rounded-md p-2"
             >
               Logout
             </DropdownMenuItem>
@@ -105,7 +101,7 @@ export default function HeaderActions({
           <Link href="/login">
             <Button
               variant="ghost"
-              className="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition"
+              className="hidden md:block text-sm font-medium text-gray-300 hover:text-white px-2 py-1 rounded hover:bg-gray-900 transition"
             >
               Sign In
             </Button>
@@ -113,7 +109,7 @@ export default function HeaderActions({
           <Link href="/register">
             <Button
               variant="ghost"
-              className="text-sm font-medium text-gray-700 dark:text-gray-200 hover:text-blue-600 dark:hover:text-blue-400 transition"
+              className="bg-gradient-to-r from-purple-600 to-pink-500 text-white hover:text-white hover:from-purple-700 hover:to-pink-600 shadow-md"
             >
               Register
             </Button>
