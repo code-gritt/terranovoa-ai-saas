@@ -58,6 +58,7 @@
     "embla-carousel-react": "^8.6.0",
     "framer-motion": "^12.23.7",
     "input-otp": "^1.4.2",
+    "json2csv": "^6.0.0-alpha.2",
     "jspdf": "^3.0.1",
     "leaflet": "^1.9.4",
     "leaflet.heat": "^0.2.0",
@@ -88,6 +89,7 @@
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/bcrypt": "^6.0.0",
+    "@types/json2csv": "^5.0.7",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

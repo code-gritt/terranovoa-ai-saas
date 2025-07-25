@@ -195,6 +195,28 @@ export default function DashboardClient({
     doc.save("TerraNova_Report.pdf");
   };
 
+  const exportCSV = async () => {
+    console.log("Exporting CSV for userId:", user.id); // Debug log
+    const response = await fetch(`/api/export?userId=${user.id}`);
+    if (response.ok) {
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = `TerraNova_Projects_${
+        new Date().toISOString().split("T")[0]
+      }.csv`;
+      a.click();
+      window.URL.revokeObjectURL(url);
+    } else {
+      const errorText = await response.text();
+      console.error("Failed to export CSV:", response.status, errorText);
+      alert(
+        `Failed to export CSV. Status: ${response.status}. Check console for details.`
+      );
+    }
+  };
+
   const API_KEY = "82151bbbc5a82e1267c8a232bd09d99b";
 
   return (
@@ -203,8 +225,14 @@ export default function DashboardClient({
         <Header />
         <section className="py-10 px-4 md:px-8">
           <div className="max-w-7xl mx-auto">
-            {/* Create Project and Generate Report Buttons */}
+            {/* Create Project and Export/Generate Report Buttons */}
             <div className="flex justify-end mb-6 space-x-4">
+              <Button
+                onClick={exportCSV}
+                className="bg-blue-600 hover:bg-blue-700"
+              >
+                Export CSV
+              </Button>
               <Button
                 onClick={generateDDR}
                 className="bg-green-600 hover:bg-green-700"
