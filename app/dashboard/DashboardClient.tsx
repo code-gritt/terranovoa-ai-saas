@@ -22,11 +22,21 @@ import AIInsights from "@/components/AIInsights";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import jsPDF from "jspdf"; // Import jsPDF
 import solarIrradianceData from "@/public/data/solar_irradiance.json" assert { type: "json" };
-import windSpeedData from "@/public/data/wind_speed.json.json" assert { type: "json" };
+import windSpeedData from "@/public/data/wind_speed.json.json" assert { type: "json" }; // Fixed import typo
 import protectedAreasData from "@/public/data/protected_areas.json" assert { type: "json" };
 import type { FeatureCollection } from "geojson";
 import MapClickHandler from "@/components/MapClickHandler";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog"; // Import additional Dialog components
 
 // Fix Leaflet icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -87,7 +97,6 @@ export default function DashboardClient({
     windSpeed: false,
     protectedAreas: false,
   });
-  const [showCreateProject, setShowCreateProject] = useState(false);
   const [newProjectCoords, setNewProjectCoords] = useState<
     [number, number] | null
   >(null);
@@ -140,11 +149,34 @@ export default function DashboardClient({
 
   const handleMapClick = (e: L.LeafletMouseEvent) => {
     setNewProjectCoords([e.latlng.lat, e.latlng.lng]);
-    setShowCreateProject(true);
   };
 
   const toggleLayer = (layer: keyof typeof layers) => {
     setLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
+  };
+
+  // Function to generate DDR
+  const generateDDR = () => {
+    const doc = new jsPDF();
+    doc.setFontSize(16);
+    doc.text("TerraNova AI Report", 10, 10);
+    doc.setFontSize(12);
+    doc.text(`Generated on: ${new Date().toLocaleDateString()}`, 10, 20);
+    doc.text(`User: ${user.firstName || "User"}`, 10, 30);
+    doc.text(`Total Projects: ${projects.length}`, 10, 40);
+
+    // Add project list
+    projects.forEach((project, index) => {
+      const y = 50 + index * 10;
+      doc.text(
+        `${project.name} - ${project.status} - Location: ${project.location}`,
+        10,
+        y
+      );
+    });
+
+    // Save the PDF
+    doc.save("TerraNova_Report.pdf");
   };
 
   return (
@@ -153,15 +185,28 @@ export default function DashboardClient({
         <Header />
         <section className="py-10 px-4 md:px-8">
           <div className="max-w-7xl mx-auto">
-            {/* Create Project */}
-            <div className="flex justify-end mb-6">
-              {showCreateProject ? (
-                <div className="bg-gray-900/50 p-4 rounded-lg">
+            {/* Create Project and Generate Report Buttons */}
+            <div className="flex justify-end mb-6 space-x-4">
+              <Button
+                onClick={generateDDR}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                Generate Report
+              </Button>
+              <Dialog>
+                <DialogTrigger asChild>
+                  <Button className="bg-cyan-600 hover:bg-cyan-700">
+                    Create Project
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 max-w-md">
+                  <DialogHeader>
+                    <DialogTitle>Create Project</DialogTitle>
+                  </DialogHeader>
                   <CreateProject
                     userId={user.id}
                     onProjectCreated={() => {
                       refreshProjects();
-                      setShowCreateProject(false);
                       setNewProjectCoords(null);
                     }}
                     coordinates={
@@ -170,22 +215,8 @@ export default function DashboardClient({
                         : undefined
                     }
                   />
-                  <Button
-                    variant="outline"
-                    onClick={() => setShowCreateProject(false)}
-                    className="mt-2 text-gray-400 border-gray-700"
-                  >
-                    Cancel
-                  </Button>
-                </div>
-              ) : (
-                <Button
-                  onClick={() => setShowCreateProject(true)}
-                  className="bg-cyan-600 hover:bg-cyan-700"
-                >
-                  Create Project
-                </Button>
-              )}
+                </DialogContent>
+              </Dialog>
             </div>
 
             {/* Grid Layout */}

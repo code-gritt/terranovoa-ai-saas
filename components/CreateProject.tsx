@@ -55,32 +55,40 @@ export default function CreateProject({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="project-name">Project Name</Label>
+        <Label className="text-white" htmlFor="project-name">
+          Project Name
+        </Label>
         <Input
           id="project-name"
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Enter project name"
           required
+          className="text-gray-800"
         />
       </div>
       <div>
-        <Label htmlFor="project-location">Location (lat,lon)</Label>
+        <Label className="text-white" htmlFor="project-location">
+          Location (lat,lon)
+        </Label>
         <Input
           id="project-location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           placeholder="e.g., 12.9716,77.5946"
           required
+          className="text-gray-800"
         />
       </div>
       <div>
-        <Label htmlFor="project-status">Status</Label>
+        <Label className="text-white" htmlFor="project-status">
+          Status
+        </Label>
         <Select value={status} onValueChange={setStatus as any}>
-          <SelectTrigger>
+          <SelectTrigger className="w-full bg-white border border-gray-700 rounded">
             <SelectValue placeholder="Select a status" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white border-gray-700">
             <SelectItem value="Planning">Planning</SelectItem>
             <SelectItem value="Active">Active</SelectItem>
             <SelectItem value="Completed">Completed</SelectItem>

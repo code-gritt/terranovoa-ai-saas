@@ -276,7 +276,9 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
               />
             </div>
             <div>
-              <Label htmlFor="edit-location">Location (lat,lon)</Label>
+              <Label className="text-white" htmlFor="edit-location">
+                Location (lat,lon)
+              </Label>
               <Input
                 id="edit-location"
                 value={editFormData.location}
@@ -289,7 +291,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
               />
             </div>
             <div>
-              <Label>Status</Label>
+              <Label className="text-white">Status</Label>
               <Select
                 value={editFormData.status}
                 onValueChange={(value: ProjectStatus) =>
