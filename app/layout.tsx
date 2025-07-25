@@ -49,6 +49,14 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
         <link rel="manifest" href="/site.webmanifest" />
+        <meta
+          name="google-site-verification"
+          content="wdlByCZtt15adBudf4vuQ__pWccGvhmx4kxx4n_1pLY"
+        />
+        <meta
+          name="google-adsense-account"
+          content="ca-pub-8291461267710066"
+        ></meta>
       </head>
       <body className={poppins.className}>
         <ThemeProvider
