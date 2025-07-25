@@ -14,8 +14,10 @@ import {
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import ClientWrapper from "@/components/client-wrapper";
+import CreateProject from "@/components/CreateProject";
 import Header from "@/components/Header";
+import ClientWrapper from "@/components/client-wrapper";
+import DataTable from "@/components/DataTable";
 
 // Fix Leaflet default icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -112,18 +114,39 @@ export default function DashboardClient({
     scales: { y: { beginAtZero: true, ticks: { color: "#d1d5db" } } },
   };
 
+  const handleProjectCreated = async () => {
+    const response = await fetch(`/api/projects?userId=${user.id}`, {
+      cache: "no-store",
+    });
+    const updatedProjects = await response.json();
+    setProjects(updatedProjects);
+  };
+
   return (
     <ClientWrapper>
       <div className="flex flex-col bg-gray-950 text-gray-100 min-h-[11700px]">
         <Header />
         <section className="relative py-20 md:py-32">
-          {/* Background gradient */}
           <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950"></div>
-
           <div className="container relative px-4 md:px-8">
-            <div className="grid gap-8 md:grid-cols-3">
+            <div className="flex justify-end mb-6">
+              <CreateProject
+                userId={user.id}
+                onProjectCreated={handleProjectCreated}
+              />
+            </div>
+            <div
+              className="grid gap-8"
+              style={{
+                gridTemplateColumns: "1fr 1fr",
+                gridTemplateAreas: "'overview map' 'stats map'",
+              }}
+            >
               {/* User Overview */}
-              <div className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
+              <div
+                style={{ gridArea: "overview" }}
+                className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50"
+              >
                 <h2 className="mb-2 text-xl font-bold">User Overview</h2>
                 <p className="text-gray-400">
                   Welcome, {user.firstName || "User"}!
@@ -136,7 +159,10 @@ export default function DashboardClient({
               </div>
 
               {/* Project Statistics */}
-              <div className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
+              <div
+                style={{ gridArea: "stats" }}
+                className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50"
+              >
                 <h2 className="mb-2 text-xl font-bold">Project Stats</h2>
                 <p className="text-gray-400">Total Projects: {projectCount}</p>
                 <div className="mt-4 h-48">
@@ -145,7 +171,10 @@ export default function DashboardClient({
               </div>
 
               {/* Geospatial Map */}
-              <div className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
+              <div
+                style={{ gridArea: "map" }}
+                className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50"
+              >
                 <h2 className="mb-2 text-xl font-bold">Project Locations</h2>
                 <MapContainer
                   center={[20.5937, 78.9629]} // Centered on India
@@ -173,6 +202,14 @@ export default function DashboardClient({
                     );
                   })}
                 </MapContainer>
+              </div>
+            </div>
+
+            {/* Project Data Table */}
+            <div className="mt-6">
+              <div className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
+                <h2 className="mb-4 text-xl font-bold">Project List</h2>
+                <DataTable data={projects} />
               </div>
             </div>
 

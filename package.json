@@ -40,6 +40,7 @@
     "@radix-ui/react-toggle-group": "^1.1.10",
     "@radix-ui/react-tooltip": "^1.2.7",
     "@studio-freight/lenis": "^1.0.42",
+    "@tanstack/react-table": "^8.21.3",
     "@types/leaflet": "^1.9.20",
     "bcrypt": "^6.0.0",
     "chart.js": "^4.5.0",
