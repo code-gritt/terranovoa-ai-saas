@@ -100,7 +100,7 @@ function LazyLoad({ children }: { children: React.ReactNode }) {
 export default function LandingPage() {
   return (
     <ClientWrapper>
-      <div className="flex flex-col bg-gray-950 text-gray-100 min-h-[11700px]">
+      <div className="flex flex-col text-gray-100 min-h-[11700px]">
         <ScrollRestoration />
         <Header />
         <Hero />
