@@ -1,102 +1,142 @@
+// src/components/CreateProject.tsx
 "use client";
 
-import { useAction } from "next-safe-action/hooks";
-import { createProjectAction } from "@/server/actions/projectActions";
-import { toast } from "react-hot-toast";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from "@/components/ui/select";
-import { useState } from "react";
 
-type ProjectStatus = "Planning" | "Active" | "Completed" | "On Hold";
+type Milestone = {
+  name: string;
+  targetDate: string;
+  completionPercentage: number;
+};
 
-interface CreateProjectProps {
+type CreateProjectProps = {
   userId: string;
   onProjectCreated: () => void;
-  coordinates?: string; // Optional coordinates (e.g., "lat,lon")
-}
+  coordinates?: string;
+  onMilestonesChange?: (milestones: Milestone[]) => void;
+};
 
 export default function CreateProject({
   userId,
   onProjectCreated,
   coordinates,
+  onMilestonesChange,
 }: CreateProjectProps) {
   const [name, setName] = useState("");
   const [location, setLocation] = useState(coordinates || "");
-  const [status, setStatus] = useState<ProjectStatus>("Planning");
+  const [status, setStatus] = useState<
+    "Planning" | "Active" | "Completed" | "On Hold"
+  >("Planning");
+  const [milestones, setMilestones] = useState<Milestone[]>([
+    { name: "", targetDate: "", completionPercentage: 0 },
+  ]);
 
-  const { execute: createExecute } = useAction(createProjectAction, {
-    onSuccess(data) {
-      if (data.data?.success) {
-        toast.success(data.data.success);
-        setName("");
-        setLocation("");
-        setStatus("Planning");
-        onProjectCreated();
-      } else if (data.data?.error) {
-        toast.error(data.data.error);
-      }
-    },
-  });
+  const handleAddMilestone: React.MouseEventHandler<HTMLButtonElement> = () => {
+    setMilestones([
+      ...milestones,
+      { name: "", targetDate: "", completionPercentage: 0 },
+    ]);
+  };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleMilestoneChange = (
+    index: number,
+    field: keyof Milestone,
+    value: string | number
+  ) => {
+    const newMilestones = [...milestones];
+    newMilestones[index] = { ...newMilestones[index], [field]: value };
+    setMilestones(newMilestones);
+    if (onMilestonesChange) onMilestonesChange(newMilestones);
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name || !location) return;
-    createExecute({ name, location, status, userId });
+    const response = await fetch("/api/projects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name,
+        location,
+        status,
+        userId,
+        milestones,
+      }),
+    });
+    if (response.ok) onProjectCreated();
   };
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <Input
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Project Name"
+        required
+      />
+      <Input
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+        placeholder="Location (lat,lon)"
+        required
+      />
+      <select
+        value={status}
+        onChange={(e) => setStatus(e.target.value as any)}
+        className="w-full p-2 bg-white border border-gray-700 rounded"
+      >
+        <option value="Planning">Planning</option>
+        <option value="Active">Active</option>
+        <option value="Completed">Completed</option>
+        <option value="On Hold">On Hold</option>
+      </select>
       <div>
-        <Label className="text-white" htmlFor="project-name">
-          Project Name
-        </Label>
-        <Input
-          id="project-name"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          placeholder="Enter project name"
-          required
-          className="text-gray-800"
-        />
+        <h3 className="text-sm font-bold">Milestones</h3>
+        {milestones.map((milestone, index) => (
+          <div key={index} className="space-y-2 mt-2">
+            <Input
+              value={milestone.name}
+              onChange={(e) =>
+                handleMilestoneChange(index, "name", e.target.value)
+              }
+              placeholder="Milestone Name"
+              required
+            />
+            <Input
+              type="date"
+              value={milestone.targetDate}
+              onChange={(e) =>
+                handleMilestoneChange(index, "targetDate", e.target.value)
+              }
+              required
+            />
+            <Input
+              type="number"
+              value={milestone.completionPercentage}
+              onChange={(e) =>
+                handleMilestoneChange(
+                  index,
+                  "completionPercentage",
+                  parseInt(e.target.value) || 0
+                )
+              }
+              placeholder="Completion % (0-100)"
+              min="0"
+              max="100"
+              required
+            />
+          </div>
+        ))}
+        <Button
+          type="button"
+          onClick={handleAddMilestone}
+          className="mt-2 w-full bg-blue-600 hover:bg-blue-700"
+        >
+          Add Milestone
+        </Button>
       </div>
-      <div>
-        <Label className="text-white" htmlFor="project-location">
-          Location (lat,lon)
-        </Label>
-        <Input
-          id="project-location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          placeholder="e.g., 12.9716,77.5946"
-          required
-          className="text-gray-800"
-        />
-      </div>
-      <div>
-        <Label className="text-white" htmlFor="project-status">
-          Status
-        </Label>
-        <Select value={status} onValueChange={setStatus as any}>
-          <SelectTrigger className="w-full bg-white border border-gray-700 rounded">
-            <SelectValue placeholder="Select a status" />
-          </SelectTrigger>
-          <SelectContent className="bg-white border-gray-700">
-            <SelectItem value="Planning">Planning</SelectItem>
-            <SelectItem value="Active">Active</SelectItem>
-            <SelectItem value="Completed">Completed</SelectItem>
-            <SelectItem value="On Hold">On Hold</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <Button type="submit" className="bg-cyan-600 hover:bg-cyan-700">
+      <Button type="submit" className="w-full bg-green-600 hover:bg-green-700">
         Create Project
       </Button>
     </form>

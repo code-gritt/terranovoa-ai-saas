@@ -56,6 +56,13 @@ ChartJS.register(
   Legend
 );
 
+// Define Milestone and Project Types
+type Milestone = {
+  name: string;
+  targetDate: string; // ISO date string (e.g., "2025-07-26")
+  completionPercentage: number; // 0-100
+};
+
 type User = {
   id: string;
   firstName: string | null;
@@ -73,6 +80,7 @@ type Project = {
   location: string;
   status: "Planning" | "Active" | "Completed" | "On Hold";
   userId: string;
+  milestones: Milestone[]; // Dynamic milestone data
 };
 
 interface DashboardClientProps {
@@ -96,8 +104,8 @@ export default function DashboardClient({
     solarIrradiance: false,
     windSpeed: false,
     protectedAreas: false,
-    weatherTemp: false, // New weather layer for temperature
-    weatherPrecip: false, // New weather layer for precipitation
+    weatherTemp: false,
+    weatherPrecip: false,
   });
   const [newProjectCoords, setNewProjectCoords] = useState<
     [number, number] | null
@@ -157,7 +165,6 @@ export default function DashboardClient({
     setLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
   };
 
-  // Function to generate DDR
   const generateDDR = () => {
     const doc = new jsPDF();
     doc.setFontSize(16);
@@ -174,6 +181,13 @@ export default function DashboardClient({
         10,
         y
       );
+      project.milestones.forEach((milestone, mIndex) => {
+        doc.text(
+          `  Milestone: ${milestone.name} - ${milestone.targetDate} - ${milestone.completionPercentage}%`,
+          15,
+          y + (mIndex + 1) * 10
+        );
+      });
     });
 
     doc.save("TerraNova_Report.pdf");
@@ -217,17 +231,12 @@ export default function DashboardClient({
                         ? `${newProjectCoords[0]},${newProjectCoords[1]}`
                         : undefined
                     }
+                    // Pass a function to handle milestone updates
+                    onMilestonesChange={(milestones: any) => {
+                      // This will be handled in CreateProject; ensure it updates the project object
+                      console.log("Milestones updated:", milestones);
+                    }}
                   />
-                  <DialogFooter className="flex gap-2">
-                    <DialogClose asChild>
-                      <Button
-                        variant="outline"
-                        className="text-gray-800 border-gray-700"
-                      >
-                        Cancel
-                      </Button>
-                    </DialogClose>
-                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
@@ -318,12 +327,30 @@ export default function DashboardClient({
                       const [lat, lon] = project.location
                         ?.split(",")
                         .map(Number) || [0, 0];
+                      const totalProgress =
+                        Array.isArray(project.milestones) &&
+                        project.milestones.length > 0
+                          ? project.milestones.reduce(
+                              (sum, milestone) =>
+                                sum + milestone.completionPercentage,
+                              0
+                            ) / project.milestones.length
+                          : 0;
+
                       return (
                         lat &&
                         lon && (
                           <Marker key={project.id} position={[lat, lon]}>
                             <Popup>
-                              {project.name} <br /> Status: {project.status}
+                              {project.name} <br /> Status: {project.status}{" "}
+                              <br /> Progress:{" "}
+                              <div className="w-full bg-gray-700 rounded-full h-2.5">
+                                <div
+                                  className="bg-blue-600 h-2.5 rounded-full"
+                                  style={{ width: `${totalProgress}%` }}
+                                ></div>
+                              </div>
+                              {totalProgress.toFixed(1)}%
                             </Popup>
                           </Marker>
                         )
@@ -407,7 +434,21 @@ export default function DashboardClient({
             {/* Data Table */}
             <div className="mt-6 rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
               <h2 className="text-xl font-bold mb-4">Project List</h2>
-              <DataTable data={projects} onProjectUpdated={refreshProjects} />
+              <DataTable
+                data={projects.map((project) => ({
+                  ...project,
+                  progress:
+                    Array.isArray(project.milestones) &&
+                    project.milestones.length > 0
+                      ? project.milestones.reduce(
+                          (sum, milestone) =>
+                            sum + milestone.completionPercentage,
+                          0
+                        ) / project.milestones.length
+                      : 0,
+                }))}
+                onProjectUpdated={refreshProjects}
+              />
             </div>
 
             {/* AI Insights */}

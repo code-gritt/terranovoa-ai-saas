@@ -15,6 +15,13 @@
       "when": 1753394650305,
       "tag": "0001_normal_taskmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1753472289680,
+      "tag": "0002_colossal_bullseye",
+      "breakpoints": true
     }
   ]
 }

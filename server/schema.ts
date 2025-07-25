@@ -1,4 +1,5 @@
-import { pgTable, text, pgEnum, timestamp } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { pgTable, text, pgEnum, timestamp, jsonb } from "drizzle-orm/pg-core";
 
 export const SkillLevelEnum = pgEnum("skill_level", [
   "Beginner",
@@ -43,4 +44,5 @@ export const projects = pgTable("projects", {
     .defaultNow()
     .notNull()
     .$onUpdateFn(() => new Date()),
+  milestones: jsonb("milestones").default(sql`'[]'::jsonb`), // New column for milestones
 });

@@ -49,6 +49,7 @@ type Project = {
   location: string;
   status: ProjectStatus;
   userId: string;
+  progress?: number; // Add progress as optional for compatibility
 };
 
 interface DataTableProps {
@@ -134,6 +135,24 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
     {
       accessorKey: "status",
       header: "Status",
+    },
+    {
+      accessorKey: "progress",
+      header: "Progress",
+      cell: ({ row }) => {
+        const progress = row.original.progress || 0;
+        return (
+          <div className="w-full bg-gray-700 rounded-full h-2.5">
+            <div
+              className="bg-blue-600 h-2.5 rounded-full"
+              style={{ width: `${progress}%` }}
+            ></div>
+            <span className="text-sm text-gray-400 ml-2">
+              {progress.toFixed(1)}%
+            </span>
+          </div>
+        );
+      },
     },
     {
       id: "actions",

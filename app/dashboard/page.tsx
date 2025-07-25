@@ -2,8 +2,25 @@ import { auth } from "@/server/auth";
 import { redirect } from "next/navigation";
 import DashboardClient from "./DashboardClient";
 import { db } from "@/server/db";
-import { projects, users } from "@/server/schema";
 import { eq } from "drizzle-orm";
+import { projects, users } from "@/server/schema";
+
+type Milestone = {
+  name: string;
+  targetDate: string;
+  completionPercentage: number;
+};
+
+type Project = {
+  id: string;
+  name: string;
+  status: "Planning" | "Active" | "Completed" | "On Hold";
+  location: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+  milestones: Milestone[];
+};
 
 export default async function Dashboard() {
   const session = await auth();
@@ -12,7 +29,7 @@ export default async function Dashboard() {
     redirect("/login");
   }
 
-  // Fetch user data on the server
+  // Fetch user
   const [user] = await db
     .select()
     .from(users)
@@ -23,12 +40,38 @@ export default async function Dashboard() {
     redirect("/login");
   }
 
-  // Fetch user projects on the server
-  const userProjects = await db
-    .select()
-    .from(projects)
-    .where(eq(projects.userId, user.id));
+  // Fetch and normalize user projects with error handling
+  let rawProjects: any[];
+  try {
+    rawProjects = await db
+      .select()
+      .from(projects)
+      .where(eq(projects.userId, user.id));
+  } catch (error) {
+    console.error("Failed to fetch projects:", error);
+    rawProjects = []; // Fallback to empty array on error
+  }
 
-  // Pass data as props to the client component
+  const userProjects: Project[] = rawProjects.map((project) => {
+    // Safely handle milestones, ensuring it's an array
+    const milestonesData = project.milestones;
+    const milestones: Milestone[] = Array.isArray(milestonesData)
+      ? milestonesData
+      : typeof milestonesData === "object" && milestonesData !== null
+      ? Object.values(milestonesData)
+      : [];
+
+    return {
+      ...project,
+      milestones: milestones.map((m) => ({
+        name: m.name || "",
+        targetDate: m.targetDate || "",
+        completionPercentage: m.completionPercentage || 0,
+      })),
+      createdAt: new Date(project.createdAt),
+      updatedAt: new Date(project.updatedAt),
+    };
+  });
+
   return <DashboardClient initialUser={user} initialProjects={userProjects} />;
 }
