@@ -24,7 +24,7 @@ import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import jsPDF from "jspdf"; // Import jsPDF
 import solarIrradianceData from "@/public/data/solar_irradiance.json" assert { type: "json" };
-import windSpeedData from "@/public/data/wind_speed.json.json" assert { type: "json" }; // Fixed import typo
+import windSpeedData from "@/public/data/wind_speed.json" assert { type: "json" };
 import protectedAreasData from "@/public/data/protected_areas.json" assert { type: "json" };
 import type { FeatureCollection } from "geojson";
 import MapClickHandler from "@/components/MapClickHandler";
@@ -36,7 +36,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
-} from "@/components/ui/dialog"; // Import additional Dialog components
+} from "@/components/ui/dialog";
 
 // Fix Leaflet icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -96,6 +96,8 @@ export default function DashboardClient({
     solarIrradiance: false,
     windSpeed: false,
     protectedAreas: false,
+    weatherTemp: false, // New weather layer for temperature
+    weatherPrecip: false, // New weather layer for precipitation
   });
   const [newProjectCoords, setNewProjectCoords] = useState<
     [number, number] | null
@@ -165,7 +167,6 @@ export default function DashboardClient({
     doc.text(`User: ${user.firstName || "User"}`, 10, 30);
     doc.text(`Total Projects: ${projects.length}`, 10, 40);
 
-    // Add project list
     projects.forEach((project, index) => {
       const y = 50 + index * 10;
       doc.text(
@@ -175,9 +176,11 @@ export default function DashboardClient({
       );
     });
 
-    // Save the PDF
     doc.save("TerraNova_Report.pdf");
   };
+
+  // Replace with your OpenWeatherMap API key
+  const API_KEY = "82151bbbc5a82e1267c8a232bd09d99b";
 
   return (
     <ClientWrapper>
@@ -215,6 +218,16 @@ export default function DashboardClient({
                         : undefined
                     }
                   />
+                  <DialogFooter className="flex gap-2">
+                    <DialogClose asChild>
+                      <Button
+                        variant="outline"
+                        className="text-gray-800 border-gray-700"
+                      >
+                        Cancel
+                      </Button>
+                    </DialogClose>
+                  </DialogFooter>
                 </DialogContent>
               </Dialog>
             </div>
@@ -272,6 +285,22 @@ export default function DashboardClient({
                       onCheckedChange={() => toggleLayer("protectedAreas")}
                     />
                     <Label htmlFor="protectedAreas">Protected Areas</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="weatherTemp"
+                      checked={layers.weatherTemp}
+                      onCheckedChange={() => toggleLayer("weatherTemp")}
+                    />
+                    <Label htmlFor="weatherTemp">Temperature</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="weatherPrecip"
+                      checked={layers.weatherPrecip}
+                      onCheckedChange={() => toggleLayer("weatherPrecip")}
+                    />
+                    <Label htmlFor="weatherPrecip">Precipitation</Label>
                   </div>
                 </div>
                 <div className="h-[400px] w-full">
@@ -356,6 +385,18 @@ export default function DashboardClient({
                             `Protected Area: ${feature.properties.name}`
                           );
                         }}
+                      />
+                    )}
+                    {layers.weatherTemp && (
+                      <TileLayer
+                        url={`https://tile.openweathermap.org/map/temp_new/{z}/{x}/{y}.png?appid=${API_KEY}`}
+                        attribution='© <a href="https://openweathermap.org/">OpenWeatherMap</a>'
+                      />
+                    )}
+                    {layers.weatherPrecip && (
+                      <TileLayer
+                        url={`https://tile.openweathermap.org/map/precipitation_new/{z}/{x}/{y}.png?appid=${API_KEY}`}
+                        attribution='© <a href="https://openweathermap.org/">OpenWeatherMap</a>'
                       />
                     )}
                   </MapContainer>
