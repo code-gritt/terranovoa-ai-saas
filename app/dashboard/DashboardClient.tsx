@@ -19,7 +19,7 @@ import Header from "@/components/Header";
 import ClientWrapper from "@/components/client-wrapper";
 import DataTable from "@/components/DataTable";
 
-// Fix Leaflet default icon issue
+// Fix Leaflet icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl:
@@ -67,7 +67,6 @@ export default function DashboardClient({
 }: DashboardClientProps) {
   const [user, setUser] = useState(initialUser);
   const [projects, setProjects] = useState(initialProjects);
-  const [projectCount, setProjectCount] = useState(initialProjects.length);
   const [statusCounts, setStatusCounts] = useState({
     Planning: 0,
     Active: 0,
@@ -84,7 +83,6 @@ export default function DashboardClient({
       { Planning: 0, Active: 0, Completed: 0, "On Hold": 0 }
     );
     setStatusCounts(counts);
-    setProjectCount(projects.length);
   }, [projects]);
 
   const chartData = {
@@ -114,15 +112,7 @@ export default function DashboardClient({
     scales: { y: { beginAtZero: true, ticks: { color: "#d1d5db" } } },
   };
 
-  const handleProjectCreated = async () => {
-    const response = await fetch(`/api/projects?userId=${user.id}`, {
-      cache: "no-store",
-    });
-    const updatedProjects = await response.json();
-    setProjects(updatedProjects);
-  };
-
-  const handleProjectUpdated = async () => {
+  const refreshProjects = async () => {
     const response = await fetch(`/api/projects?userId=${user.id}`, {
       cache: "no-store",
     });
@@ -132,30 +122,23 @@ export default function DashboardClient({
 
   return (
     <ClientWrapper>
-      <div className="flex flex-col bg-gray-950 text-gray-100 min-h-[11700px]">
+      <div className="flex flex-col bg-gray-950 text-gray-100 min-h-screen">
         <Header />
-        <section className="relative py-20 md:py-32">
-          <div className="absolute inset-0 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950"></div>
-          <div className="container relative px-4 md:px-8">
+        <section className="py-10 px-4 md:px-8">
+          <div className="max-w-7xl mx-auto">
+            {/* Create Project */}
             <div className="flex justify-end mb-6">
               <CreateProject
                 userId={user.id}
-                onProjectCreated={handleProjectCreated}
+                onProjectCreated={refreshProjects}
               />
             </div>
-            <div
-              className="grid gap-8"
-              style={{
-                gridTemplateColumns: "1fr 1fr",
-                gridTemplateAreas: "'overview map' 'stats map'",
-              }}
-            >
+
+            {/* Grid Layout */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* User Overview */}
-              <div
-                style={{ gridArea: "overview" }}
-                className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50"
-              >
-                <h2 className="mb-2 text-xl font-bold">User Overview</h2>
+              <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
+                <h2 className="text-xl font-bold mb-2">User Overview</h2>
                 <p className="text-gray-400">
                   Welcome, {user.firstName || "User"}!
                 </p>
@@ -166,73 +149,65 @@ export default function DashboardClient({
                 <p className="text-gray-400">Skill Level: {user.skillLevel}</p>
               </div>
 
-              {/* Project Statistics */}
-              <div
-                style={{ gridArea: "stats" }}
-                className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50"
-              >
-                <h2 className="mb-2 text-xl font-bold">Project Stats</h2>
-                <p className="text-gray-400">Total Projects: {projectCount}</p>
-                <div className="mt-4 h-48">
+              {/* Project Stats */}
+              <div className="rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
+                <h2 className="text-xl font-bold mb-2">Project Stats</h2>
+                <p className="text-gray-400">
+                  Total Projects: {projects.length}
+                </p>
+                <div className="h-64 mt-4">
                   <Bar data={chartData} options={chartOptions} />
                 </div>
               </div>
 
-              {/* Geospatial Map */}
-              <div
-                style={{ gridArea: "map" }}
-                className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50"
-              >
-                <h2 className="mb-2 text-xl font-bold">Project Locations</h2>
-                <MapContainer
-                  center={[20.5937, 78.9629]} // Centered on India
-                  zoom={5}
-                  style={{ height: "100%", width: "100%" }}
-                  className="rounded-lg overflow-hidden"
-                >
-                  <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                  />
-                  {projects.map((project) => {
-                    const [lat, lon] = project.location
-                      .split(",")
-                      .map(Number) || [0, 0];
-                    return (
-                      lat &&
-                      lon && (
-                        <Marker key={project.id} position={[lat, lon]}>
-                          <Popup>
-                            {project.name} <br /> Status: {project.status}
-                          </Popup>
-                        </Marker>
-                      )
-                    );
-                  })}
-                </MapContainer>
+              {/* Map (spans 2 columns on mobile) */}
+              <div className="md:col-span-2 rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
+                <h2 className="text-xl font-bold mb-2">Project Locations</h2>
+                <div className="h-[400px] w-full">
+                  <MapContainer
+                    center={[20.5937, 78.9629]}
+                    zoom={5}
+                    className="h-full w-full rounded-lg"
+                  >
+                    <TileLayer
+                      url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                      attribution='© <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+                    />
+                    {projects.map((project) => {
+                      const [lat, lon] = project.location
+                        ?.split(",")
+                        .map(Number) || [0, 0];
+                      return (
+                        lat &&
+                        lon && (
+                          <Marker key={project.id} position={[lat, lon]}>
+                            <Popup>
+                              {project.name} <br /> Status: {project.status}
+                            </Popup>
+                          </Marker>
+                        )
+                      );
+                    })}
+                  </MapContainer>
+                </div>
               </div>
             </div>
 
-            {/* Project Data Table */}
-            <div className="mt-6">
-              <div className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
-                <h2 className="mb-4 text-xl font-bold">Project List</h2>
-                <DataTable
-                  data={projects}
-                  onProjectUpdated={handleProjectUpdated}
-                />
-              </div>
+            {/* Data Table */}
+            <div className="mt-6 rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
+              <h2 className="text-xl font-bold mb-4">Project List</h2>
+              <DataTable data={projects} onProjectUpdated={refreshProjects} />
             </div>
 
             {/* AI Insights */}
-            <div className="mt-6 flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
-              <h2 className="mb-2 text-xl font-bold">AI Insights</h2>
+            <div className="mt-6 rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
+              <h2 className="text-xl font-bold mb-2">AI Insights</h2>
               <p className="text-gray-400">
                 Based on your projects, AI suggests optimizing solar farms in
                 Bangalore with an estimated 15% efficiency gain using current
                 weather patterns.
               </p>
-              <p className="text-gray-400 mt-2">
+              <p className="text-gray-400 mt-2 text-sm">
                 (Note: This is a mock insight. Future updates will integrate
                 real-time AI analysis.)
               </p>
