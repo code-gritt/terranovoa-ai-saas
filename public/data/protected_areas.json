@@ -1,0 +1,21 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [77.58, 12.96],
+            [77.61, 12.96],
+            [77.61, 12.99],
+            [77.58, 12.99],
+            [77.58, 12.96]
+          ]
+        ]
+      },
+      "properties": { "name": "Protected Area 1" }
+    }
+  ]
+}

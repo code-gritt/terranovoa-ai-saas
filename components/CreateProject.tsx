@@ -1,47 +1,45 @@
 "use client";
 
-import { useState } from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogTrigger,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { useAction } from "next-safe-action/hooks";
 import { createProjectAction } from "@/server/actions/projectActions";
 import { toast } from "react-hot-toast";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { useState } from "react";
 
-// Define the callback type
-type OnProjectCreated = () => void;
+type ProjectStatus = "Planning" | "Active" | "Completed" | "On Hold";
 
 interface CreateProjectProps {
   userId: string;
-  onProjectCreated: OnProjectCreated;
+  onProjectCreated: () => void;
+  coordinates?: string; // Optional coordinates (e.g., "lat,lon")
 }
 
 export default function CreateProject({
   userId,
   onProjectCreated,
+  coordinates,
 }: CreateProjectProps) {
-  const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    name: "",
-    location: "", // Expecting "lat,lon" format
-    status: "Planning" as const,
-  });
+  const [name, setName] = useState("");
+  const [location, setLocation] = useState(coordinates || "");
+  const [status, setStatus] = useState<ProjectStatus>("Planning");
 
-  const { execute, status } = useAction(createProjectAction, {
+  const { execute: createExecute } = useAction(createProjectAction, {
     onSuccess(data) {
       if (data.data?.success) {
         toast.success(data.data.success);
-        setFormData({ name: "", location: "", status: "Planning" });
-        setOpen(false);
-        onProjectCreated(); // Callback to refresh projects
+        setName("");
+        setLocation("");
+        setStatus("Planning");
+        onProjectCreated();
       } else if (data.data?.error) {
         toast.error(data.data.error);
       }
@@ -50,83 +48,49 @@ export default function CreateProject({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    execute({ ...formData, userId });
+    if (!name || !location) return;
+    createExecute({ name, location, status, userId });
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button className="bg-cyan-600 hover:bg-cyan-700">
-          Add New Project
-        </Button>
-      </DialogTrigger>
-      <DialogContent className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 max-w-md">
-        <DialogHeader>
-          <DialogTitle>Create Project</DialogTitle>
-        </DialogHeader>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <Label htmlFor="name">Project Name</Label>
-            <Input
-              id="name"
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({ ...formData, name: e.target.value })
-              }
-              className="text-gray-800"
-              required
-            />
-          </div>
-          <div>
-            <Label htmlFor="location">Location (lat,lon)</Label>
-            <Input
-              id="location"
-              value={formData.location}
-              onChange={(e) =>
-                setFormData({ ...formData, location: e.target.value })
-              }
-              placeholder="e.g., 12.9716,77.5946"
-              className="text-gray-800"
-              required
-            />
-          </div>
-          <div>
-            <Label>Status</Label>
-            <select
-              value={formData.status}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  status: e.target.value as typeof formData.status,
-                })
-              }
-              className="w-full p-2 bg-white border border-gray-700 rounded"
-            >
-              <option value="Planning">Planning</option>
-              <option value="Active">Active</option>
-              <option value="Completed">Completed</option>
-              <option value="On Hold">On Hold</option>
-            </select>
-          </div>
-        </form>
-        <DialogFooter className="flex gap-2">
-          <Button
-            type="submit"
-            disabled={status === "executing"}
-            className="bg-cyan-600 hover:bg-cyan-700"
-            onClick={handleSubmit}
-          >
-            {status === "executing" ? "Creating..." : "Create"}
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => setOpen(false)}
-            className="text-gray-800 border-gray-700"
-          >
-            Cancel
-          </Button>
-        </DialogFooter>
-      </DialogContent>
-    </Dialog>
+    <form onSubmit={handleSubmit} className="space-y-4">
+      <div>
+        <Label htmlFor="project-name">Project Name</Label>
+        <Input
+          id="project-name"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Enter project name"
+          required
+        />
+      </div>
+      <div>
+        <Label htmlFor="project-location">Location (lat,lon)</Label>
+        <Input
+          id="project-location"
+          value={location}
+          onChange={(e) => setLocation(e.target.value)}
+          placeholder="e.g., 12.9716,77.5946"
+          required
+        />
+      </div>
+      <div>
+        <Label htmlFor="project-status">Status</Label>
+        <Select value={status} onValueChange={setStatus as any}>
+          <SelectTrigger>
+            <SelectValue placeholder="Select a status" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="Planning">Planning</SelectItem>
+            <SelectItem value="Active">Active</SelectItem>
+            <SelectItem value="Completed">Completed</SelectItem>
+            <SelectItem value="On Hold">On Hold</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+      <Button type="submit" className="bg-cyan-600 hover:bg-cyan-700">
+        Create Project
+      </Button>
+    </form>
   );
 }

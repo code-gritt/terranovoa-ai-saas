@@ -11,7 +11,7 @@ import {
   Tooltip,
   Legend,
 } from "chart.js";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, GeoJSON } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import CreateProject from "@/components/CreateProject";
@@ -19,7 +19,14 @@ import Header from "@/components/Header";
 import ClientWrapper from "@/components/client-wrapper";
 import DataTable from "@/components/DataTable";
 import AIInsights from "@/components/AIInsights";
-import axios from "axios";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import solarIrradianceData from "@/public/data/solar_irradiance.json" assert { type: "json" };
+import windSpeedData from "@/public/data/wind_speed.json.json" assert { type: "json" };
+import protectedAreasData from "@/public/data/protected_areas.json" assert { type: "json" };
+import type { FeatureCollection } from "geojson";
+import MapClickHandler from "@/components/MapClickHandler";
 
 // Fix Leaflet icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -75,6 +82,15 @@ export default function DashboardClient({
     Completed: 0,
     "On Hold": 0,
   });
+  const [layers, setLayers] = useState({
+    solarIrradiance: false,
+    windSpeed: false,
+    protectedAreas: false,
+  });
+  const [showCreateProject, setShowCreateProject] = useState(false);
+  const [newProjectCoords, setNewProjectCoords] = useState<
+    [number, number] | null
+  >(null);
 
   useEffect(() => {
     const counts = projects.reduce(
@@ -122,6 +138,15 @@ export default function DashboardClient({
     setProjects(updatedProjects);
   };
 
+  const handleMapClick = (e: L.LeafletMouseEvent) => {
+    setNewProjectCoords([e.latlng.lat, e.latlng.lng]);
+    setShowCreateProject(true);
+  };
+
+  const toggleLayer = (layer: keyof typeof layers) => {
+    setLayers((prev) => ({ ...prev, [layer]: !prev[layer] }));
+  };
+
   return (
     <ClientWrapper>
       <div className="flex flex-col bg-gray-950 text-gray-100 min-h-screen">
@@ -130,10 +155,37 @@ export default function DashboardClient({
           <div className="max-w-7xl mx-auto">
             {/* Create Project */}
             <div className="flex justify-end mb-6">
-              <CreateProject
-                userId={user.id}
-                onProjectCreated={refreshProjects}
-              />
+              {showCreateProject ? (
+                <div className="bg-gray-900/50 p-4 rounded-lg">
+                  <CreateProject
+                    userId={user.id}
+                    onProjectCreated={() => {
+                      refreshProjects();
+                      setShowCreateProject(false);
+                      setNewProjectCoords(null);
+                    }}
+                    coordinates={
+                      newProjectCoords
+                        ? `${newProjectCoords[0]},${newProjectCoords[1]}`
+                        : undefined
+                    }
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => setShowCreateProject(false)}
+                    className="mt-2 text-gray-400 border-gray-700"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              ) : (
+                <Button
+                  onClick={() => setShowCreateProject(true)}
+                  className="bg-cyan-600 hover:bg-cyan-700"
+                >
+                  Create Project
+                </Button>
+              )}
             </div>
 
             {/* Grid Layout */}
@@ -162,15 +214,42 @@ export default function DashboardClient({
                 </div>
               </div>
 
-              {/* Map (spans 2 columns on mobile) */}
+              {/* Map */}
               <div className="md:col-span-2 rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
                 <h2 className="text-xl font-bold mb-2">Project Locations</h2>
+                <div className="flex flex-wrap gap-4 mb-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="solarIrradiance"
+                      checked={layers.solarIrradiance}
+                      onCheckedChange={() => toggleLayer("solarIrradiance")}
+                    />
+                    <Label htmlFor="solarIrradiance">Solar Irradiance</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="windSpeed"
+                      checked={layers.windSpeed}
+                      onCheckedChange={() => toggleLayer("windSpeed")}
+                    />
+                    <Label htmlFor="windSpeed">Wind Speed</Label>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="protectedAreas"
+                      checked={layers.protectedAreas}
+                      onCheckedChange={() => toggleLayer("protectedAreas")}
+                    />
+                    <Label htmlFor="protectedAreas">Protected Areas</Label>
+                  </div>
+                </div>
                 <div className="h-[400px] w-full">
                   <MapContainer
                     center={[20.5937, 78.9629]}
                     zoom={5}
                     className="h-full w-full rounded-lg"
                   >
+                    <MapClickHandler onClick={handleMapClick} />
                     <TileLayer
                       url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                       attribution='© <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
@@ -190,6 +269,64 @@ export default function DashboardClient({
                         )
                       );
                     })}
+                    {layers.solarIrradiance && (
+                      <GeoJSON
+                        key="solarIrradiance"
+                        data={solarIrradianceData as FeatureCollection}
+                        pointToLayer={(feature, latlng) =>
+                          L.circleMarker(latlng, {
+                            radius: 8,
+                            fillColor: "yellow",
+                            color: "red",
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8,
+                          })
+                        }
+                        onEachFeature={(feature, layer) => {
+                          layer.bindPopup(
+                            `Solar Irradiance: ${feature.properties.value} kWh/m²/day`
+                          );
+                        }}
+                      />
+                    )}
+                    {layers.windSpeed && (
+                      <GeoJSON
+                        key="windSpeed"
+                        data={windSpeedData as FeatureCollection}
+                        pointToLayer={(feature, latlng) =>
+                          L.circleMarker(latlng, {
+                            radius: 8,
+                            fillColor: "cyan",
+                            color: "blue",
+                            weight: 1,
+                            opacity: 1,
+                            fillOpacity: 0.8,
+                          })
+                        }
+                        onEachFeature={(feature, layer) => {
+                          layer.bindPopup(
+                            `Wind Speed: ${feature.properties.value} m/s`
+                          );
+                        }}
+                      />
+                    )}
+                    {layers.protectedAreas && (
+                      <GeoJSON
+                        key="protectedAreas"
+                        data={protectedAreasData as FeatureCollection}
+                        style={{
+                          color: "red",
+                          weight: 2,
+                          fillOpacity: 0.4,
+                        }}
+                        onEachFeature={(feature, layer) => {
+                          layer.bindPopup(
+                            `Protected Area: ${feature.properties.name}`
+                          );
+                        }}
+                      />
+                    )}
                   </MapContainer>
                 </div>
               </div>
@@ -202,10 +339,7 @@ export default function DashboardClient({
             </div>
 
             {/* AI Insights */}
-            <div className="mt-6 rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
-              <h2 className="text-xl font-bold mb-2">AI Insights</h2>
-              <AIInsights projects={projects} />
-            </div>
+            <AIInsights projects={projects} />
           </div>
         </section>
       </div>
