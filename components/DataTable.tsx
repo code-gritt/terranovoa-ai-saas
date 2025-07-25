@@ -58,12 +58,69 @@ interface DataTableProps {
 
 export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
   const [editProject, setEditProject] = useState<Project | null>(null);
-  const [editFormData, setEditFormData] = useState({
+  const [editFormData, setEditFormData] = useState<{
+    name: string;
+    location: string;
+    status: ProjectStatus;
+  }>({
     name: "",
     location: "",
-    status: "Planning" as ProjectStatus, // Use the union type
+    status: "Planning",
   });
   const [deleteProject, setDeleteProject] = useState<Project | null>(null); // State for delete confirmation
+
+  // Update action
+  const { execute: updateExecute, status } = useAction(updateProjectAction, {
+    onSuccess(data) {
+      if (data.data?.success) {
+        toast.success(data.data.success);
+        setEditProject(null);
+        onProjectUpdated();
+      } else if (data.data?.error) {
+        toast.error(data.data.error);
+      }
+    },
+  });
+
+  // Delete action
+  const { execute: deleteExecute } = useAction(deleteProjectAction, {
+    onSuccess(data) {
+      if (data.data?.success) {
+        toast.success(data.data.success);
+        onProjectUpdated();
+        setDeleteProject(null); // Close dialog on success
+      } else if (data.data?.error) {
+        toast.error(data.data.error);
+      }
+    },
+  });
+
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editProject) {
+      updateExecute({
+        projectId: editProject.id,
+        name: editFormData.name,
+        location: editFormData.location,
+        status: editFormData.status,
+      });
+    }
+  };
+
+  const handleEdit = (project: Project) => {
+    setEditProject(project);
+    setEditFormData({
+      name: project.name,
+      location: project.location,
+      status: project.status,
+    });
+  };
+
+  const handleDeleteConfirm = () => {
+    if (deleteProject) {
+      deleteExecute({ projectId: deleteProject.id });
+    }
+  };
 
   const columns: ColumnDef<Project>[] = [
     {
@@ -83,38 +140,18 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
       header: "Actions",
       cell: ({ row }) => {
         const project = row.original;
-
-        // Delete action
-        const { execute: deleteExecute } = useAction(deleteProjectAction, {
-          onSuccess(data) {
-            if (data.data?.success) {
-              toast.success(data.data.success);
-              onProjectUpdated();
-              setDeleteProject(null); // Close dialog on success
-            } else if (data.data?.error) {
-              toast.error(data.data.error);
-            }
-          },
-        });
-
-        const handleDeleteConfirm = () => {
-          if (deleteProject) {
-            deleteExecute({ projectId: deleteProject.id });
-          }
-        };
-
         return (
           <div className="flex gap-2">
             <Button
               variant="outline"
               size="sm"
               className="text-black border-gray-700"
-              onClick={() => setEditProject(project)}
+              onClick={() => handleEdit(project)}
             >
               Edit
             </Button>
             <Dialog
-              open={!!deleteProject}
+              open={!!deleteProject && deleteProject.id === project.id}
               onOpenChange={(open) => setDeleteProject(open ? project : null)}
             >
               <DialogTrigger asChild>
@@ -159,40 +196,6 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
       },
     },
   ];
-
-  // Update action
-  const { execute: updateExecute } = useAction(updateProjectAction, {
-    onSuccess(data) {
-      if (data.data?.success) {
-        toast.success(data.data.success);
-        setEditProject(null);
-        onProjectUpdated();
-      } else if (data.data?.error) {
-        toast.error(data.data.error);
-      }
-    },
-  });
-
-  const handleUpdate = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editProject) {
-      updateExecute({
-        projectId: editProject.id,
-        name: editFormData.name,
-        location: editFormData.location,
-        status: editFormData.status,
-      });
-    }
-  };
-
-  const handleEdit = (project: Project) => {
-    setEditProject(project);
-    setEditFormData({
-      name: project.name,
-      location: project.location,
-      status: project.status,
-    });
-  };
 
   const table = useReactTable({
     data,
@@ -252,10 +255,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
       </div>
 
       {/* Edit Dialog */}
-      <Dialog
-        open={!!editProject}
-        onOpenChange={(open) => setEditProject(open ? editProject : null)}
-      >
+      <Dialog open={!!editProject} onOpenChange={() => setEditProject(null)}>
         <DialogContent className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Project</DialogTitle>
@@ -293,10 +293,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
               <Select
                 value={editFormData.status}
                 onValueChange={(value: ProjectStatus) =>
-                  setEditFormData({
-                    ...editFormData,
-                    status: value,
-                  })
+                  setEditFormData({ ...editFormData, status: value })
                 }
               >
                 <SelectTrigger className="w-full bg-white border border-gray-700 rounded">
@@ -310,24 +307,23 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
                 </SelectContent>
               </Select>
             </div>
+            <DialogFooter className="flex gap-2">
+              <Button
+                type="submit"
+                disabled={status === "executing"}
+                className="bg-cyan-600 hover:bg-cyan-700"
+              >
+                {status === "executing" ? "Updating..." : "Update"}
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => setEditProject(null)}
+                className="text-gray-800 border-gray-700"
+              >
+                Cancel
+              </Button>
+            </DialogFooter>
           </form>
-          <DialogFooter className="flex gap-2">
-            <Button
-              type="submit"
-              disabled={status === "executing"}
-              className="bg-cyan-600 hover:bg-cyan-700"
-              onClick={handleUpdate}
-            >
-              {status === "executing" ? "Updating..." : "Update"}
-            </Button>
-            <Button
-              variant="outline"
-              onClick={() => setEditProject(null)}
-              className="text-gray-800 border-gray-700"
-            >
-              Cancel
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </div>
