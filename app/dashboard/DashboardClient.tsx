@@ -18,6 +18,8 @@ import CreateProject from "@/components/CreateProject";
 import Header from "@/components/Header";
 import ClientWrapper from "@/components/client-wrapper";
 import DataTable from "@/components/DataTable";
+import AIInsights from "@/components/AIInsights";
+import axios from "axios";
 
 // Fix Leaflet icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -202,15 +204,7 @@ export default function DashboardClient({
             {/* AI Insights */}
             <div className="mt-6 rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
               <h2 className="text-xl font-bold mb-2">AI Insights</h2>
-              <p className="text-gray-400">
-                Based on your projects, AI suggests optimizing solar farms in
-                Bangalore with an estimated 15% efficiency gain using current
-                weather patterns.
-              </p>
-              <p className="text-gray-400 mt-2 text-sm">
-                (Note: This is a mock insight. Future updates will integrate
-                real-time AI analysis.)
-              </p>
+              <AIInsights projects={projects} />
             </div>
           </div>
         </section>

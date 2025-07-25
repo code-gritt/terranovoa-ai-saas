@@ -1,3 +1,14 @@
 {
-  "pages": {}
+  "pages": {
+    "/api/gemini-insights/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/api/gemini-insights/route.js"
+    ],
+    "/(auth)/api/auth/[...nextauth]/route": [
+      "static/chunks/webpack.js",
+      "static/chunks/main-app.js",
+      "static/chunks/app/(auth)/api/auth/[...nextauth]/route.js"
+    ]
+  }
 }

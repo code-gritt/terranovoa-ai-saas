@@ -108,7 +108,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
             <Button
               variant="outline"
               size="sm"
-              className="text-gray-400 border-gray-700"
+              className="text-black border-gray-700"
               onClick={() => setEditProject(project)}
             >
               Edit
@@ -262,7 +262,9 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
           </DialogHeader>
           <form onSubmit={handleUpdate} className="space-y-4">
             <div>
-              <Label htmlFor="edit-name">Project Name</Label>
+              <Label className="text-white" htmlFor="edit-name">
+                Project Name
+              </Label>
               <Input
                 id="edit-name"
                 value={editFormData.name}
@@ -297,10 +299,10 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
                   })
                 }
               >
-                <SelectTrigger className="w-full bg-gray-800 border border-gray-700 rounded">
+                <SelectTrigger className="w-full bg-white border border-gray-700 rounded">
                   <SelectValue placeholder="Select a status" />
                 </SelectTrigger>
-                <SelectContent className="bg-gray-900 border-gray-700">
+                <SelectContent className="bg-white border-gray-700">
                   <SelectItem value="Planning">Planning</SelectItem>
                   <SelectItem value="Active">Active</SelectItem>
                   <SelectItem value="Completed">Completed</SelectItem>
