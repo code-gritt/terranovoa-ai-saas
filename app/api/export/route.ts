@@ -28,7 +28,10 @@ export async function GET(request: Request) {
     }
 
     // Fetch projects dynamically from the existing API endpoint
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3000";
+    const apiUrl =
+      process.env.NEXT_PUBLIC_API_URL ||
+      "http://localhost:3000" ||
+      "https://terranovoa-ai.vercel.app";
     const projectsResponse = await fetch(
       `${apiUrl}/api/projects?userId=${userId}`,
       {
