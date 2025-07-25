@@ -14,20 +14,56 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { useAction } from "next-safe-action/hooks";
+import {
+  deleteProjectAction,
+  updateProjectAction,
+} from "@/server/actions/projectActions";
+import { toast } from "react-hot-toast";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useState } from "react";
+
+// Define the status type as a union
+type ProjectStatus = "Planning" | "Active" | "Completed" | "On Hold";
 
 type Project = {
   id: string;
   name: string;
   location: string;
-  status: "Planning" | "Active" | "Completed" | "On Hold";
+  status: ProjectStatus;
   userId: string;
 };
 
 interface DataTableProps {
   data: Project[];
+  onProjectUpdated: () => void; // Callback to refresh data
 }
 
-export default function DataTable({ data }: DataTableProps) {
+export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
+  const [editProject, setEditProject] = useState<Project | null>(null);
+  const [editFormData, setEditFormData] = useState({
+    name: "",
+    location: "",
+    status: "Planning" as ProjectStatus, // Use the union type
+  });
+
   const columns: ColumnDef<Project>[] = [
     {
       accessorKey: "name",
@@ -41,7 +77,83 @@ export default function DataTable({ data }: DataTableProps) {
       accessorKey: "status",
       header: "Status",
     },
+    {
+      id: "actions",
+      header: "Actions",
+      cell: ({ row }) => {
+        const project = row.original;
+
+        // Delete action
+        const { execute: deleteExecute } = useAction(deleteProjectAction, {
+          onSuccess(data) {
+            if (data.data?.success) {
+              toast.success(data.data.success);
+              onProjectUpdated();
+            } else if (data.data?.error) {
+              toast.error(data.data.error);
+            }
+          },
+        });
+
+        const handleDelete = () => {
+          if (confirm(`Are you sure you want to delete ${project.name}?`)) {
+            deleteExecute({ projectId: project.id });
+          }
+        };
+
+        // Edit action
+        const handleEdit = () => {
+          setEditProject(project);
+          setEditFormData({
+            name: project.name,
+            location: project.location,
+            status: project.status, // Use the project's status
+          });
+        };
+
+        return (
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-gray-400 border-gray-700"
+              onClick={handleEdit}
+            >
+              Edit
+            </Button>
+            <Button variant="destructive" size="sm" onClick={handleDelete}>
+              Delete
+            </Button>
+          </div>
+        );
+      },
+    },
   ];
+
+  // Update action
+  const { execute: updateExecute } = useAction(updateProjectAction, {
+    onSuccess(data) {
+      if (data.data?.success) {
+        toast.success(data.data.success);
+        setEditProject(null);
+        onProjectUpdated();
+      } else if (data.data?.error) {
+        toast.error(data.data.error);
+      }
+    },
+  });
+
+  const handleUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (editProject) {
+      updateExecute({
+        projectId: editProject.id,
+        name: editFormData.name,
+        location: editFormData.location,
+        status: editFormData.status,
+      });
+    }
+  };
 
   const table = useReactTable({
     data,
@@ -99,6 +211,81 @@ export default function DataTable({ data }: DataTableProps) {
           </TableBody>
         </Table>
       </div>
+
+      {/* Edit Dialog */}
+      <Dialog open={!!editProject} onOpenChange={() => setEditProject(null)}>
+        <DialogContent className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 max-w-md">
+          <DialogHeader>
+            <DialogTitle>Edit Project</DialogTitle>
+          </DialogHeader>
+          <form onSubmit={handleUpdate} className="space-y-4">
+            <div>
+              <Label htmlFor="edit-name">Project Name</Label>
+              <Input
+                id="edit-name"
+                value={editFormData.name}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, name: e.target.value })
+                }
+                className="text-gray-800"
+                required
+              />
+            </div>
+            <div>
+              <Label htmlFor="edit-location">Location (lat,lon)</Label>
+              <Input
+                id="edit-location"
+                value={editFormData.location}
+                onChange={(e) =>
+                  setEditFormData({ ...editFormData, location: e.target.value })
+                }
+                placeholder="e.g., 12.9716,77.5946"
+                className="text-gray-800"
+                required
+              />
+            </div>
+            <div>
+              <Label>Status</Label>
+              <Select
+                value={editFormData.status}
+                onValueChange={(value: ProjectStatus) =>
+                  setEditFormData({
+                    ...editFormData,
+                    status: value,
+                  })
+                }
+              >
+                <SelectTrigger className="w-full bg-gray-800 border border-gray-700 rounded">
+                  <SelectValue placeholder="Select a status" />
+                </SelectTrigger>
+                <SelectContent className="bg-gray-900 border-gray-700">
+                  <SelectItem value="Planning">Planning</SelectItem>
+                  <SelectItem value="Active">Active</SelectItem>
+                  <SelectItem value="Completed">Completed</SelectItem>
+                  <SelectItem value="On Hold">On Hold</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </form>
+          <DialogFooter className="flex gap-2">
+            <Button
+              type="submit"
+              disabled={status === "executing"}
+              className="bg-cyan-600 hover:bg-cyan-700"
+              onClick={handleUpdate}
+            >
+              {status === "executing" ? "Updating..." : "Update"}
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => setEditProject(null)}
+              className="text-gray-800 border-gray-700"
+            >
+              Cancel
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

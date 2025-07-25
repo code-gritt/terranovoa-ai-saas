@@ -13,9 +13,9 @@
     ]
   },
   "app\\page.tsx -> @/components/comparison-table": {
-    "id": 9368,
+    "id": 7803,
     "files": [
-      "static/chunks/368.724c78a56b9b34a9.js"
+      "static/chunks/803.b1949e7ce88038b4.js"
     ]
   },
   "app\\page.tsx -> @/components/cta": {
@@ -25,10 +25,10 @@
     ]
   },
   "app\\page.tsx -> @/components/faq": {
-    "id": 7985,
+    "id": 8528,
     "files": [
       "static/chunks/923.826ea9508a50afd6.js",
-      "static/chunks/985.b1df3fc3ef2f4c18.js"
+      "static/chunks/528.6b5f3d566602fc75.js"
     ]
   },
   "app\\page.tsx -> @/components/features": {

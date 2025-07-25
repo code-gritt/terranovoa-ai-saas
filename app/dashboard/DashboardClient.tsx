@@ -122,6 +122,14 @@ export default function DashboardClient({
     setProjects(updatedProjects);
   };
 
+  const handleProjectUpdated = async () => {
+    const response = await fetch(`/api/projects?userId=${user.id}`, {
+      cache: "no-store",
+    });
+    const updatedProjects = await response.json();
+    setProjects(updatedProjects);
+  };
+
   return (
     <ClientWrapper>
       <div className="flex flex-col bg-gray-950 text-gray-100 min-h-[11700px]">
@@ -209,7 +217,10 @@ export default function DashboardClient({
             <div className="mt-6">
               <div className="flex flex-col rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm transition-all hover:border-cyan-900/50 hover:bg-gray-800/50">
                 <h2 className="mb-4 text-xl font-bold">Project List</h2>
-                <DataTable data={projects} />
+                <DataTable
+                  data={projects}
+                  onProjectUpdated={handleProjectUpdated}
+                />
               </div>
             </div>
 

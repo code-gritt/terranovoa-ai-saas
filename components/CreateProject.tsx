@@ -1,6 +1,14 @@
 "use client";
 
-import { useState, useEffect } from "react"; // Added useEffect
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogTrigger,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -45,102 +53,80 @@ export default function CreateProject({
     execute({ ...formData, userId });
   };
 
-  // Handle click outside to close modal
-  useEffect(() => {
-    const handleOutsideClick = (e: MouseEvent) => {
-      const modal = document.querySelector(
-        ".bg-gray-900/50.border.border-gray-800.rounded-lg.p-6"
-      );
-      if (modal && !modal.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-
-    if (open) {
-      document.addEventListener("mousedown", handleOutsideClick);
-    }
-
-    return () => {
-      document.removeEventListener("mousedown", handleOutsideClick);
-    };
-  }, [open]);
-
   return (
-    <div>
-      <Button
-        onClick={() => setOpen(true)}
-        className="bg-cyan-600 hover:bg-cyan-700"
-      >
-        Add New Project
-      </Button>
-      {open && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
-          <div className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 w-full max-w-md">
-            <h3 className="text-xl font-bold mb-4">Create Project</h3>
-            <form onSubmit={handleSubmit} className="space-y-4">
-              <div>
-                <Label htmlFor="name">Project Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) =>
-                    setFormData({ ...formData, name: e.target.value })
-                  }
-                  className="text-gray-800"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="location">Location (lat,lon)</Label>
-                <Input
-                  id="location"
-                  value={formData.location}
-                  onChange={(e) =>
-                    setFormData({ ...formData, location: e.target.value })
-                  }
-                  placeholder="e.g., 12.9716,77.5946"
-                  className="text-gray-800"
-                  required
-                />
-              </div>
-              <div>
-                <Label>Status</Label>
-                <select
-                  value={formData.status}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-                      status: e.target.value as typeof formData.status,
-                    })
-                  }
-                  className="w-full p-2 bg-gray-800 border border-gray-700 rounded"
-                >
-                  <option value="Planning">Planning</option>
-                  <option value="Active">Active</option>
-                  <option value="Completed">Completed</option>
-                  <option value="On Hold">On Hold</option>
-                </select>
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  type="submit"
-                  disabled={status === "executing"}
-                  className="bg-cyan-600 hover:bg-cyan-700"
-                >
-                  {status === "executing" ? "Creating..." : "Create"}
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => setOpen(false)}
-                  className="text-gray-800 border-gray-700"
-                >
-                  Cancel
-                </Button>
-              </div>
-            </form>
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button className="bg-cyan-600 hover:bg-cyan-700">
+          Add New Project
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 max-w-md">
+        <DialogHeader>
+          <DialogTitle>Create Project</DialogTitle>
+        </DialogHeader>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <Label htmlFor="name">Project Name</Label>
+            <Input
+              id="name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
+              className="text-gray-800"
+              required
+            />
           </div>
-        </div>
-      )}
-    </div>
+          <div>
+            <Label htmlFor="location">Location (lat,lon)</Label>
+            <Input
+              id="location"
+              value={formData.location}
+              onChange={(e) =>
+                setFormData({ ...formData, location: e.target.value })
+              }
+              placeholder="e.g., 12.9716,77.5946"
+              className="text-gray-800"
+              required
+            />
+          </div>
+          <div>
+            <Label>Status</Label>
+            <select
+              value={formData.status}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  status: e.target.value as typeof formData.status,
+                })
+              }
+              className="w-full p-2 bg-white border border-gray-700 rounded"
+            >
+              <option value="Planning">Planning</option>
+              <option value="Active">Active</option>
+              <option value="Completed">Completed</option>
+              <option value="On Hold">On Hold</option>
+            </select>
+          </div>
+        </form>
+        <DialogFooter className="flex gap-2">
+          <Button
+            type="submit"
+            disabled={status === "executing"}
+            className="bg-cyan-600 hover:bg-cyan-700"
+            onClick={handleSubmit}
+          >
+            {status === "executing" ? "Creating..." : "Create"}
+          </Button>
+          <Button
+            variant="outline"
+            onClick={() => setOpen(false)}
+            className="text-gray-800 border-gray-700"
+          >
+            Cancel
+          </Button>
+        </DialogFooter>
+      </DialogContent>
+    </Dialog>
   );
 }
