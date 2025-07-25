@@ -22,7 +22,7 @@ import AIInsights from "@/components/AIInsights";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import jsPDF from "jspdf"; // Import jsPDF
+import jsPDF from "jspdf";
 import solarIrradianceData from "@/public/data/solar_irradiance.json" assert { type: "json" };
 import windSpeedData from "@/public/data/wind_speed.json" assert { type: "json" };
 import protectedAreasData from "@/public/data/protected_areas.json" assert { type: "json" };
@@ -37,6 +37,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog";
+import { Bubble } from "@/components/bubble";
 
 // Fix Leaflet icon issue
 delete (L.Icon.Default.prototype as any)._getIconUrl;
@@ -59,8 +60,8 @@ ChartJS.register(
 // Define Milestone and Project Types
 type Milestone = {
   name: string;
-  targetDate: string; // ISO date string (e.g., "2025-07-26")
-  completionPercentage: number; // 0-100
+  targetDate: string;
+  completionPercentage: number;
 };
 
 type User = {
@@ -80,7 +81,7 @@ type Project = {
   location: string;
   status: "Planning" | "Active" | "Completed" | "On Hold";
   userId: string;
-  milestones: Milestone[]; // Dynamic milestone data
+  milestones: Milestone[];
 };
 
 interface DashboardClientProps {
@@ -110,6 +111,7 @@ export default function DashboardClient({
   const [newProjectCoords, setNewProjectCoords] = useState<
     [number, number] | null
   >(null);
+  const [filteredProjects, setFilteredProjects] = useState<Project[]>([]);
 
   useEffect(() => {
     const counts = projects.reduce(
@@ -193,7 +195,6 @@ export default function DashboardClient({
     doc.save("TerraNova_Report.pdf");
   };
 
-  // Replace with your OpenWeatherMap API key
   const API_KEY = "82151bbbc5a82e1267c8a232bd09d99b";
 
   return (
@@ -231,9 +232,7 @@ export default function DashboardClient({
                         ? `${newProjectCoords[0]},${newProjectCoords[1]}`
                         : undefined
                     }
-                    // Pass a function to handle milestone updates
                     onMilestonesChange={(milestones: any) => {
-                      // This will be handled in CreateProject; ensure it updates the project object
                       console.log("Milestones updated:", milestones);
                     }}
                   />
@@ -435,24 +434,34 @@ export default function DashboardClient({
             <div className="mt-6 rounded-xl border border-gray-800 bg-gray-900/50 p-6 backdrop-blur-sm">
               <h2 className="text-xl font-bold mb-4">Project List</h2>
               <DataTable
-                data={projects.map((project) => ({
-                  ...project,
-                  progress:
-                    Array.isArray(project.milestones) &&
-                    project.milestones.length > 0
-                      ? project.milestones.reduce(
-                          (sum, milestone) =>
-                            sum + milestone.completionPercentage,
-                          0
-                        ) / project.milestones.length
-                      : 0,
-                }))}
+                data={
+                  filteredProjects.length > 0
+                    ? filteredProjects
+                    : projects.map((project) => ({
+                        ...project,
+                        progress:
+                          Array.isArray(project.milestones) &&
+                          project.milestones.length > 0
+                            ? project.milestones.reduce(
+                                (sum, milestone) =>
+                                  sum + milestone.completionPercentage,
+                                0
+                              ) / project.milestones.length
+                            : 0,
+                      }))
+                }
                 onProjectUpdated={refreshProjects}
               />
             </div>
 
             {/* AI Insights */}
             <AIInsights projects={projects} />
+
+            {/* Chatbot Section */}
+            <Bubble
+              projects={projects}
+              onFilterProjects={setFilteredProjects}
+            />
           </div>
         </section>
       </div>
