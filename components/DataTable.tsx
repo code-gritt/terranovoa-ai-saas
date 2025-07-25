@@ -63,6 +63,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
     location: "",
     status: "Planning" as ProjectStatus, // Use the union type
   });
+  const [deleteProject, setDeleteProject] = useState<Project | null>(null); // State for delete confirmation
 
   const columns: ColumnDef<Project>[] = [
     {
@@ -89,26 +90,17 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
             if (data.data?.success) {
               toast.success(data.data.success);
               onProjectUpdated();
+              setDeleteProject(null); // Close dialog on success
             } else if (data.data?.error) {
               toast.error(data.data.error);
             }
           },
         });
 
-        const handleDelete = () => {
-          if (confirm(`Are you sure you want to delete ${project.name}?`)) {
-            deleteExecute({ projectId: project.id });
+        const handleDeleteConfirm = () => {
+          if (deleteProject) {
+            deleteExecute({ projectId: deleteProject.id });
           }
-        };
-
-        // Edit action
-        const handleEdit = () => {
-          setEditProject(project);
-          setEditFormData({
-            name: project.name,
-            location: project.location,
-            status: project.status, // Use the project's status
-          });
         };
 
         return (
@@ -117,13 +109,51 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
               variant="outline"
               size="sm"
               className="text-gray-400 border-gray-700"
-              onClick={handleEdit}
+              onClick={() => setEditProject(project)}
             >
               Edit
             </Button>
-            <Button variant="destructive" size="sm" onClick={handleDelete}>
-              Delete
-            </Button>
+            <Dialog
+              open={!!deleteProject}
+              onOpenChange={(open) => setDeleteProject(open ? project : null)}
+            >
+              <DialogTrigger asChild>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => setDeleteProject(project)}
+                >
+                  Delete
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 max-w-md">
+                <DialogHeader>
+                  <DialogTitle>Confirm Deletion</DialogTitle>
+                </DialogHeader>
+                <div className="py-4">
+                  <p className="text-gray-400">
+                    Are you sure you want to delete "{deleteProject?.name}"?
+                    This action cannot be undone.
+                  </p>
+                </div>
+                <DialogFooter className="flex gap-2">
+                  <Button
+                    variant="destructive"
+                    onClick={handleDeleteConfirm}
+                    disabled={deleteProject === null}
+                  >
+                    Confirm
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={() => setDeleteProject(null)}
+                    className="text-gray-800 border-gray-700"
+                  >
+                    Cancel
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         );
       },
@@ -153,6 +183,15 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
         status: editFormData.status,
       });
     }
+  };
+
+  const handleEdit = (project: Project) => {
+    setEditProject(project);
+    setEditFormData({
+      name: project.name,
+      location: project.location,
+      status: project.status,
+    });
   };
 
   const table = useReactTable({
@@ -213,7 +252,10 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
       </div>
 
       {/* Edit Dialog */}
-      <Dialog open={!!editProject} onOpenChange={() => setEditProject(null)}>
+      <Dialog
+        open={!!editProject}
+        onOpenChange={(open) => setEditProject(open ? editProject : null)}
+      >
         <DialogContent className="bg-gray-900/50 border border-gray-800 rounded-lg p-6 max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Project</DialogTitle>
