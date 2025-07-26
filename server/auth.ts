@@ -1,3 +1,4 @@
+// src/server/auth.ts
 import NextAuth, { type NextAuthConfig } from "next-auth";
 import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { eq } from "drizzle-orm";
@@ -36,6 +37,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           firstName: user.firstName,
           lastName: user.lastName,
+          image: user.image, // Include image if available
         };
       },
     }),
@@ -54,15 +56,17 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.email = user.email as string;
         token.firstName = user.firstName as string | null;
         token.lastName = user.lastName as string | null;
+        token.image = user.image as string | null; // Add image to JWT
       }
       return token;
     },
     async session({ session, token }) {
-      if (session.user && token.id) {
+      if (session.user && token) {
         session.user.id = token.id as string;
         session.user.email = token.email as string;
         session.user.firstName = token.firstName as string | null;
         session.user.lastName = token.lastName as string | null;
+        session.user.image = token.image as string | null; // Sync image
       }
       return session;
     },

@@ -1,3 +1,4 @@
+// components/HeaderActions.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
@@ -32,21 +33,23 @@ export default function HeaderActions({
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  // Sync user store with session
+  useEffect(() => {
     if (status === "authenticated" && session?.user) {
       setUser({
         id: session.user.id || "",
         email: session.user.email || "",
         firstName: session.user.firstName || null,
         lastName: session.user.lastName || null,
+        image: session.user.image || null, // Sync image
       });
     } else if (status === "unauthenticated") {
       clearUser();
     }
   }, [session, status, setUser, clearUser]);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const getInitials = () => {
     if (!user) return "NA";
@@ -54,6 +57,8 @@ export default function HeaderActions({
     const lastInitial = user.lastName?.charAt(0)?.toUpperCase() || "";
     return `${firstInitial}${lastInitial}`;
   };
+
+  if (!mounted) return null; // Prevent rendering before mount
 
   return (
     <div className="flex items-center gap-4">
@@ -104,6 +109,12 @@ export default function HeaderActions({
               <span className="font-medium text-white">Last Name</span>
               <span>{user.lastName || "N/A"}</span>
             </DropdownMenuItem>
+            {user.image && (
+              <DropdownMenuItem className="flex flex-col items-start text-sm text-gray-400 hover:bg-gray-900 rounded-md p-2">
+                <span className="font-medium text-white">Image</span>
+                <span>{user.image}</span>
+              </DropdownMenuItem>
+            )}
             <DropdownMenuSeparator className="bg-gray-800 my-1" />
             <DropdownMenuItem
               onClick={() => signOut({ callbackUrl: "/login" })}

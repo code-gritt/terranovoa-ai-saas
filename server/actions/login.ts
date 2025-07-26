@@ -1,3 +1,4 @@
+// src/server/actions/login.ts
 "use server";
 
 import { LoginSchema } from "@/types/login-schema";
@@ -7,7 +8,6 @@ import { db } from "../db";
 import { eq } from "drizzle-orm";
 import { users } from "../schema";
 import { signIn } from "../auth";
-import { redirect } from "next/navigation";
 
 export const LoginAccount = actionClient
   .schema(LoginSchema)
@@ -26,11 +26,17 @@ export const LoginAccount = actionClient
       return { error: "Invalid email or password" };
     }
 
-    await signIn("credentials", {
+    // Sign in and get the callback URL
+    const result = await signIn("credentials", {
       email,
       password,
-      redirect: false,
+      redirect: false, // Prevent immediate redirect
     });
 
-    redirect("/");
+    if (result?.error) {
+      return { error: result.error };
+    }
+
+    // Use a client-side redirect after session update
+    return { success: true, redirect: "/dashboard" };
   });

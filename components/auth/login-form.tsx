@@ -1,3 +1,4 @@
+// components/auth/login-form.tsx
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -18,6 +19,7 @@ import { useAction } from "next-safe-action/hooks";
 import { LoginAccount } from "@/server/actions/login";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
   const form = useForm<z.infer<typeof LoginSchema>>({
@@ -28,11 +30,18 @@ const LoginForm = () => {
     },
   });
 
+  const router = useRouter();
   const { execute, status } = useAction(LoginAccount, {
     onSuccess(data) {
       if (data.data?.error) {
         toast.error(data.data.error);
+      } else if (data.data?.success && data.data.redirect) {
+        toast.success("Login successful!");
+        router.push(data.data.redirect); // Client-side redirect
       }
+    },
+    onError(error) {
+      toast.error("An error occurred during login.");
     },
   });
 
