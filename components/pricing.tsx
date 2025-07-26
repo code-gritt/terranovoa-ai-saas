@@ -5,7 +5,7 @@ export default function Pricing() {
   const plans = [
     {
       name: "Explorer",
-      price: "$49",
+      price: "$0",
       description: "Ideal for individual renewable energy enthusiasts",
       features: [
         "5 Projects",
@@ -16,7 +16,7 @@ export default function Pricing() {
     },
     {
       name: "Innovator",
-      price: "$99",
+      price: "$29",
       description: "Perfect for growing energy teams",
       features: [
         "15 Projects",
@@ -30,7 +30,7 @@ export default function Pricing() {
     },
     {
       name: "Visionary",
-      price: "$199",
+      price: "$59",
       description: "Tailored for large-scale energy organizations",
       features: [
         "Unlimited Projects",
