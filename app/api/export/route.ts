@@ -27,13 +27,11 @@ export async function GET(request: Request) {
       );
     }
 
-    // Fetch projects dynamically from the existing API endpoint
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL ||
-      "http://localhost:3000" ||
-      "https://terranovoa-ai.vercel.app";
+    // Fetch projects from the same deployment
     const projectsResponse = await fetch(
-      `${apiUrl}/api/projects?userId=${userId}`,
+      `${
+        process.env.NEXT_PUBLIC_API_URL || request.url.split("/api/export")[0]
+      }/api/projects?userId=${userId}`,
       {
         cache: "no-store", // Ensure fresh data
       }
@@ -80,7 +78,7 @@ export async function GET(request: Request) {
       }.csv"`,
     };
 
-    return new NextResponse(csv, { headers });
+    return new NextResponse(csv, { headers, status: 200 });
   } catch (error: any) {
     console.error("Export API error:", error.message || error);
     return NextResponse.json(

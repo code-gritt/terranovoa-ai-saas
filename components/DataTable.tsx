@@ -43,12 +43,19 @@ import { useState } from "react";
 // Define the status type as a union
 type ProjectStatus = "Planning" | "Active" | "Completed" | "On Hold";
 
+type Milestone = {
+  name: string;
+  targetDate: string;
+  completionPercentage: number;
+};
+
 type Project = {
   id: string;
   name: string;
   location: string;
   status: ProjectStatus;
   userId: string;
+  milestones?: Milestone[]; // Add milestones as optional
   progress?: number; // Add progress as optional for compatibility
 };
 
@@ -63,6 +70,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
     name: string;
     location: string;
     status: ProjectStatus;
+    milestones?: Milestone[];
   }>({
     name: "",
     location: "",
@@ -71,17 +79,25 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
   const [deleteProject, setDeleteProject] = useState<Project | null>(null); // State for delete confirmation
 
   // Update action
-  const { execute: updateExecute, status } = useAction(updateProjectAction, {
-    onSuccess(data) {
-      if (data.data?.success) {
-        toast.success(data.data.success);
-        setEditProject(null);
-        onProjectUpdated();
-      } else if (data.data?.error) {
-        toast.error(data.data.error);
-      }
-    },
-  });
+  const { execute: updateExecute, status: updateStatus } = useAction(
+    updateProjectAction,
+    {
+      onSuccess(data) {
+        console.log("Update response:", data); // Debug log
+        if (data.data?.success) {
+          toast.success(data.data.success);
+          setEditProject(null);
+          onProjectUpdated();
+        } else if (data.data?.error) {
+          toast.error(data.data.error);
+        }
+      },
+      onError(error) {
+        console.error("Update error:", error); // Debug error
+        toast.error("An error occurred while updating");
+      },
+    }
+  );
 
   // Delete action
   const { execute: deleteExecute } = useAction(deleteProjectAction, {
@@ -99,6 +115,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
   const handleUpdate = (e: React.FormEvent) => {
     e.preventDefault();
     if (editProject) {
+      console.log("Updating project:", editFormData); // Debug log
       updateExecute({
         projectId: editProject.id,
         name: editFormData.name,
@@ -114,6 +131,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
       name: project.name,
       location: project.location,
       status: project.status,
+      milestones: project.milestones || [],
     });
   };
 
@@ -121,6 +139,13 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
     if (deleteProject) {
       deleteExecute({ projectId: deleteProject.id });
     }
+  };
+
+  const handleChange = (
+    field: keyof typeof editFormData,
+    value: string | ProjectStatus | Milestone[]
+  ) => {
+    setEditFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const columns: ColumnDef<Project>[] = [
@@ -287,9 +312,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
               <Input
                 id="edit-name"
                 value={editFormData.name}
-                onChange={(e) =>
-                  setEditFormData({ ...editFormData, name: e.target.value })
-                }
+                onChange={(e) => handleChange("name", e.target.value)}
                 className="text-gray-800"
                 required
               />
@@ -301,9 +324,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
               <Input
                 id="edit-location"
                 value={editFormData.location}
-                onChange={(e) =>
-                  setEditFormData({ ...editFormData, location: e.target.value })
-                }
+                onChange={(e) => handleChange("location", e.target.value)}
                 placeholder="e.g., 12.9716,77.5946"
                 className="text-gray-800"
                 required
@@ -314,7 +335,7 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
               <Select
                 value={editFormData.status}
                 onValueChange={(value: ProjectStatus) =>
-                  setEditFormData({ ...editFormData, status: value })
+                  handleChange("status", value)
                 }
               >
                 <SelectTrigger className="w-full bg-white border border-gray-700 rounded">
@@ -331,10 +352,10 @@ export default function DataTable({ data, onProjectUpdated }: DataTableProps) {
             <DialogFooter className="flex gap-2">
               <Button
                 type="submit"
-                disabled={status === "executing"}
+                disabled={updateStatus === "executing"}
                 className="bg-cyan-600 hover:bg-cyan-700"
               >
-                {status === "executing" ? "Updating..." : "Update"}
+                {updateStatus === "executing" ? "Updating..." : "Update"}
               </Button>
               <Button
                 variant="outline"

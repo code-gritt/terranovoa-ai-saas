@@ -197,7 +197,9 @@ export default function DashboardClient({
 
   const exportCSV = async () => {
     console.log("Exporting CSV for userId:", user.id); // Debug log
-    const response = await fetch(`/api/export?userId=${user.id}`);
+    const response = await fetch(`/api/export?userId=${user.id}`, {
+      method: "GET", // Explicitly set method to GET
+    });
     if (response.ok) {
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
