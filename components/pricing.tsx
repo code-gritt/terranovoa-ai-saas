@@ -45,7 +45,10 @@ export default function Pricing() {
   ];
 
   return (
-    <section id="pricing" className="relative py-20 md:py-32">
+    <section
+      id="pricing"
+      className="relative py-20 md:py-32 bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950"
+    >
       {/* Background SVG pattern */}
       <div className="absolute inset-0 opacity-5">
         <svg width="100%" height="100%">
