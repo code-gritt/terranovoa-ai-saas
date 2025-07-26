@@ -47,7 +47,7 @@ export default function ComparisonTable() {
                 <div className="col-span-1 text-center">
                   <div className="font-bold text-xl mb-2">Explorer</div>
                   <div className="text-3xl font-bold mb-2">
-                    $49<span className="text-lg text-gray-400">/mo</span>
+                    $0<span className="text-lg text-gray-400">/mo</span>
                   </div>
                   <div className="text-sm text-gray-400 mb-4">
                     For individual enthusiasts
@@ -65,7 +65,7 @@ export default function ComparisonTable() {
                   </div>
                   <div className="font-bold text-xl mb-2">Innovator</div>
                   <div className="text-3xl font-bold mb-2">
-                    $99<span className="text-lg text-gray-400">/mo</span>
+                    $29<span className="text-lg text-gray-400">/mo</span>
                   </div>
                   <div className="text-sm text-gray-400 mb-4">
                     For growing energy teams
@@ -77,7 +77,7 @@ export default function ComparisonTable() {
                 <div className="col-span-1 text-center">
                   <div className="font-bold text-xl mb-2">Visionary</div>
                   <div className="text-3xl font-bold mb-2">
-                    $199<span className="text-lg text-gray-400">/mo</span>
+                    $59<span className="text-lg text-gray-400">/mo</span>
                   </div>
                   <div className="text-sm text-gray-400 mb-4">
                     For large energy organizations
