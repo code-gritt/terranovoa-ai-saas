@@ -14,3 +14,7 @@ yarn-error.log*
 .env.development.local
 .env.test.local
 .env.production.local
+.next/cache
+# Ignore Next.js build cache
+.next/cache/webpack
+

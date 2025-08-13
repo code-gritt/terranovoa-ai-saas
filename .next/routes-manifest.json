@@ -48,6 +48,12 @@
       "namedRegex": "^/dashboard(?:/)?$"
     },
     {
+      "page": "/fds",
+      "regex": "^/fds(?:/)?$",
+      "routeKeys": {},
+      "namedRegex": "^/fds(?:/)?$"
+    },
+    {
       "page": "/login",
       "regex": "^/login(?:/)?$",
       "routeKeys": {},
