@@ -39,11 +39,8 @@ export default function DesktopNav({
   megaMenuRef,
   megaMenus,
 }: DesktopNavProps) {
-  // Handler functions (copied from index, but adapted for props)
   const handleMouseEnter = (menuId: string) => {
-    if (menuTimeoutRef.current) {
-      clearTimeout(menuTimeoutRef.current);
-    }
+    if (menuTimeoutRef.current) clearTimeout(menuTimeoutRef.current);
     setActiveMegaMenu(menuId);
     const navElement = navRefs.current?.[menuId];
     if (navElement) {
@@ -60,26 +57,17 @@ export default function DesktopNav({
   };
 
   const handleMouseLeave = () => {
-    if (menuTimeoutRef.current) {
-      clearTimeout(menuTimeoutRef.current);
-    }
+    if (menuTimeoutRef.current) clearTimeout(menuTimeoutRef.current);
     if (!isHoveringMenu) {
       menuTimeoutRef.current = setTimeout(() => {
         setActiveMegaMenu(null);
-        setIndicatorStyle(
-          (prev: { width: number; left: number; opacity: number }) => ({
-            ...prev,
-            opacity: 0,
-          })
-        );
+        setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }));
       }, 300);
     }
   };
 
   const handleMenuMouseEnter = () => {
-    if (menuTimeoutRef.current) {
-      clearTimeout(menuTimeoutRef.current);
-    }
+    if (menuTimeoutRef.current) clearTimeout(menuTimeoutRef.current);
     setIsHoveringMenu(true);
   };
 
@@ -87,16 +75,15 @@ export default function DesktopNav({
     setIsHoveringMenu(false);
     menuTimeoutRef.current = setTimeout(() => {
       setActiveMegaMenu(null);
-      setIndicatorStyle((prev: any) => ({ ...prev, opacity: 0 }));
+      setIndicatorStyle((prev) => ({ ...prev, opacity: 0 }));
     }, 300);
   };
 
-  // Calculate arrow position for the open menu (centered under the active nav link)
-  let arrowLeft = indicatorStyle.left + indicatorStyle.width / 2 - 14; // 14px is half the arrow width (28px)
+  let arrowLeft = indicatorStyle.left + indicatorStyle.width / 2 - 14;
 
   return (
     <nav className="hidden md:flex items-center gap-6 relative">
-      {/* Animated gradient arrow indicator (flipped horizontally, sits on top border of menu) */}
+      {/* Arrow indicator */}
       {activeMegaMenu && (
         <div
           className="pointer-events-none absolute z-50"
@@ -108,10 +95,12 @@ export default function DesktopNav({
             transition:
               "left 300ms cubic-bezier(0.4,0,0.2,1), top 300ms cubic-bezier(0.4,0,0.2,1)",
             background: "#a21caf",
-            clipPath: "polygon(50% 0%, 0 100%, 100% 100%)", // flipped triangle
+            clipPath: "polygon(50% 0%, 0 100%, 100% 100%)",
           }}
         />
       )}
+
+      {/* Products */}
       <div
         className="relative"
         onMouseEnter={() => handleMouseEnter("products")}
@@ -129,7 +118,9 @@ export default function DesktopNav({
           Products
         </button>
       </div>
-      <div
+
+      {/* Resources */}
+      {/* <div
         className="relative"
         onMouseEnter={() => handleMouseEnter("resources")}
         onMouseLeave={handleMouseLeave}
@@ -145,8 +136,28 @@ export default function DesktopNav({
         >
           Resources
         </button>
+      </div> */}
+
+      {/* NEW: Modules */}
+      <div
+        className="relative"
+        onMouseEnter={() => handleMouseEnter("modules")}
+        onMouseLeave={handleMouseLeave}
+        ref={(el) => {
+          navRefs.current && (navRefs.current.modules = el);
+        }}
+      >
+        <button
+          className={cn(
+            "flex items-center gap-1 text-sm font-medium px-2 py-1 rounded hover:text-white transition",
+            activeMegaMenu === "modules" ? "text-white" : "text-gray-300"
+          )}
+        >
+          Modules
+        </button>
       </div>
-      <Link
+
+      {/* <Link
         href="#pricing"
         className="text-sm font-medium text-gray-300 hover:text-white px-2 py-1 rounded transition"
       >
@@ -157,14 +168,15 @@ export default function DesktopNav({
         className="text-sm font-medium text-gray-300 hover:text-white px-2 py-1 rounded transition"
       >
         Testimonials
-      </Link>
+      </Link> */}
+
       {/* Mega Menu */}
       {activeMegaMenu && (
         <div
           ref={megaMenuRef}
           className="absolute left-0 right-0"
           style={{
-            top: "calc(100% + 12px)", // menu starts right after the arrow (arrow height)
+            top: "calc(100% + 12px)",
             zIndex: 50,
             background: "rgba(17, 15, 31, 0.95)",
             backdropFilter: "blur(8px)",
@@ -172,13 +184,12 @@ export default function DesktopNav({
             justifyContent: "center",
             minWidth: "max-content",
             padding: "2rem 2rem",
-            borderTop: "0px solid transparent",
             position: "absolute",
           }}
           onMouseEnter={handleMenuMouseEnter}
           onMouseLeave={handleMenuMouseLeave}
         >
-          {/* Gradient border for the menu */}
+          {/* Gradient border */}
           <div
             style={{
               position: "absolute",
