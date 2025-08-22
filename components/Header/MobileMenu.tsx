@@ -52,14 +52,12 @@ export default function MobileMenu({
               </div>
               <div className="space-y-0.5">
                 <Link
-                  href="/wms"
+                  href="/terraloop"
                   className="flex items-center py-2 px-3 text-gray-200 rounded-lg hover:bg-gray-800 group"
                   onClick={() => setIsMenuOpen(false)}
                 >
                   <BarChart3 className="h-4 w-4 text-purple-400 mr-2" />
-                  <span className="font-medium text-sm">
-                    Waste Management System
-                  </span>
+                  <span className="font-medium text-sm">Terraloop</span>
                   <ChevronRight className="ml-auto h-3 w-3 text-gray-500" />
                 </Link>
                 <Link

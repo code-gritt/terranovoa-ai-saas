@@ -95,9 +95,10 @@ export default function Header() {
           items: [
             {
               icon: <BarChart3 className="h-5 w-5" />,
-              title: "Waste Management System",
-              description: "Manage and monitor waste efficiently",
-              href: "/wms",
+              title: "Terraloop",
+              description:
+                "Strategic Energy Advisor for Renewable Energy Optimization",
+              href: "/terraloop",
             },
             {
               icon: <BarChart3 className="h-5 w-5" />,
