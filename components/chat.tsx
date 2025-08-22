@@ -9,17 +9,17 @@ import { geocodeLocation } from "@/lib/utils";
 import { CohereClient } from "cohere-ai";
 import dynamic from "next/dynamic";
 import ReactMarkdown from "react-markdown";
-import createPlotlyComponent from "react-plotly.js/factory";
-import Plotly from "plotly.js-basic-dist"; // ✅ smaller build
+// import createPlotlyComponent from "react-plotly.js/factory";
+// import Plotly from "plotly.js-basic-dist"; // ✅ smaller build
 
 // ✅ Wrap Plotly with factory
-const Plot = dynamic(
-  async () => {
-    const PlotlyFactory = (await import("react-plotly.js/factory")).default;
-    return PlotlyFactory(Plotly);
-  },
-  { ssr: false, loading: () => <div>Loading plot...</div> }
-);
+// const Plot = dynamic(
+//   async () => {
+//     const PlotlyFactory = (await import("react-plotly.js/factory")).default;
+//     return PlotlyFactory(Plotly);
+//   },
+//   { ssr: false, loading: () => <div>Loading plot...</div> }
+// );
 
 const cohere = new CohereClient({
   token: process.env.NEXT_PUBLIC_COHERE_API_KEY || "", // ✅ never hardcode secret

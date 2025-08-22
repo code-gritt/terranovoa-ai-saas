@@ -65,12 +65,6 @@
       "static/chunks/_app-pages-browser_components_testimonials_tsx.js"
     ]
   },
-  "components\\chat.tsx -> react-plotly.js/factory": {
-    "id": "components\\chat.tsx -> react-plotly.js/factory",
-    "files": [
-      "static/chunks/_app-pages-browser_node_modules_react-plotly_js_factory_js.js"
-    ]
-  },
   "node_modules\\@aws-sdk\\credential-provider-cognito-identity\\dist-es\\fromCognitoIdentity.js -> ./loadCognitoIdentity": {
     "id": "node_modules\\@aws-sdk\\credential-provider-cognito-identity\\dist-es\\fromCognitoIdentity.js -> ./loadCognitoIdentity",
     "files": [
