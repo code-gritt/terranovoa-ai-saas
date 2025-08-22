@@ -9,6 +9,7 @@ import {
 import { Leaf } from "lucide-react"; // Changed from Zap to Leaf
 import mapboxgl from "mapbox-gl";
 import "mapbox-gl/dist/mapbox-gl.css";
+import Link from "next/link";
 
 export interface MapRef {
   setLocation: (lat: number, lng: number) => void;
@@ -76,10 +77,12 @@ const Map = forwardRef<MapRef>((props, ref) => {
         <div className="flex items-center gap-2">
           <Leaf className="h-6 w-6 text-primary" />{" "}
           {/* Changed from Zap to Leaf */}
-          <div className="flex flex-col">
-            <h1 className="font-bold text-lg"> Terraloop</h1>
-            <p className="text-xs">Strategic Renewable Energy Advisor</p>
-          </div>
+          <Link href="/dashboard">
+            <div className="flex flex-col">
+              <h1 className="font-bold text-lg"> Terraloop</h1>
+              <p className="text-xs">Strategic Renewable Energy Advisor</p>
+            </div>
+          </Link>
         </div>
       </div>
       <div ref={mapContainer} className="w-full h-full" />
