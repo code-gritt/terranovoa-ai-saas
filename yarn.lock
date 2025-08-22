@@ -2676,6 +2676,13 @@
     pg-protocol "*"
     pg-types "^2.2.0"
 
+"@types/plotly.js-basic-dist@^1.54.4":
+  version "1.54.4"
+  resolved "https://registry.npmjs.org/@types/plotly.js-basic-dist/-/plotly.js-basic-dist-1.54.4.tgz"
+  integrity sha512-4Hwb5fB4sa3+SlgIDu4kfnUzhfJO789Drh7w5LvU6VglzYRcziztckvejbsnaP/TTRuiqIzLLRwqoflD6o1mKg==
+  dependencies:
+    "@types/plotly.js" "*"
+
 "@types/plotly.js@*":
   version "3.0.3"
   resolved "https://registry.npmjs.org/@types/plotly.js/-/plotly.js-3.0.3.tgz"
@@ -5832,7 +5839,12 @@ pirates@^4.0.1:
   resolved "https://registry.npmjs.org/pirates/-/pirates-4.0.7.tgz"
   integrity sha512-TfySrs/5nm8fQJDcBDuUng3VOUKsd7S+zqvbOTiGXHfxX4wK31ard+hoNuvkicM/2YFzlpDgABOevKSsB4G/FA==
 
-plotly.js@>1.34.0:
+plotly.js-basic-dist@^3.1.0:
+  version "3.1.0"
+  resolved "https://registry.npmjs.org/plotly.js-basic-dist/-/plotly.js-basic-dist-3.1.0.tgz"
+  integrity sha512-JO/z2khkXFtDh1HMQtyV1886+zyfz9Zr18FV/5NALBgxBxNe8zpbKLTWGQcCHSNflEoYc4Cx6C5NtPtLCtXEGg==
+
+plotly.js@^3.1.0, plotly.js@>1.34.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/plotly.js/-/plotly.js-3.1.0.tgz"
   integrity sha512-vx+CyzApL9tquFpwoPHOGSIWDbFPsA4om/tXZcnsygGUejXideDF9R5VwkltEIDG7Xuof45quVPyz1otv6Aqjw==

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, useEffect, JSX } from "react";
+import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -9,14 +9,20 @@ import { geocodeLocation } from "@/lib/utils";
 import { CohereClient } from "cohere-ai";
 import dynamic from "next/dynamic";
 import ReactMarkdown from "react-markdown";
+import createPlotlyComponent from "react-plotly.js/factory";
+import Plotly from "plotly.js-basic-dist"; // ✅ smaller build
 
-const Plot = dynamic(() => import("react-plotly.js"), {
-  ssr: false,
-  loading: () => <div>Loading plot...</div>,
-});
+// ✅ Wrap Plotly with factory
+const Plot = dynamic(
+  async () => {
+    const PlotlyFactory = (await import("react-plotly.js/factory")).default;
+    return PlotlyFactory(Plotly);
+  },
+  { ssr: false, loading: () => <div>Loading plot...</div> }
+);
 
 const cohere = new CohereClient({
-  token: "E5fJWZ2J9xQIxccl78UjDvk7pYFs5rBjnLhwwNQ2",
+  token: process.env.NEXT_PUBLIC_COHERE_API_KEY || "", // ✅ never hardcode secret
 });
 
 interface Message {
@@ -25,7 +31,6 @@ interface Message {
   isTyping?: boolean;
 }
 
-// ✅ Add props interface
 interface ChatProps {
   onLocationUpdate?: (lat: number, lng: number) => void;
   onFormSubmit?: () => void;
@@ -40,44 +45,34 @@ export default function Chat({ onLocationUpdate, onFormSubmit }: ChatProps) {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
 
-  // ✅ Extract coords from model response
-  function extractCoordinatesFromResponse(text: string) {
-    const degreesRegex =
-      /(\d+\.?\d*)\s*°?\s*([NSns])[,\s]+(\d+\.?\d*)\s*°?\s*([EWew])/u;
-
-    const match = text.match(degreesRegex);
-    if (!match) return null;
-
-    let lat = parseFloat(match[1]);
-    let lng = parseFloat(match[3]);
-
-    if (match[2].toUpperCase() === "S") lat = -lat;
-    if (match[4].toUpperCase() === "W") lng = -lng;
-
-    return { lat, lng };
-  }
-
   async function getEnergyAdvice(prompt: string): Promise<string> {
-    const chatResponse = await cohere.chat({
-      model: "command-r-plus-08-2024",
-      message: prompt,
-      chatHistory: [
-        {
-          role: "SYSTEM",
-          message:
-            "You are an Energy Advisor who provides scientifically accurate analyses on renewable energy potential based on historical data.",
-        },
-      ],
-    });
+    try {
+      const chatResponse = await cohere.chat({
+        model: "command-r-plus-08-2024",
+        message: prompt,
+        chatHistory: [
+          {
+            role: "SYSTEM",
+            message:
+              "You are an Energy Advisor who provides scientifically accurate analyses on renewable energy potential based on historical data.",
+          },
+        ],
+      });
 
-    return chatResponse.text || "No response from model";
+      return chatResponse.text || "No response from model.";
+    } catch (err) {
+      console.error("Cohere API error:", err);
+      return "⚠️ Error contacting AI service.";
+    }
   }
 
   async function handleSend() {
     if (!input.trim()) return;
 
+    // show user message
     setMessages((prev) => [...prev, { text: input, sender: "user" }]);
 
+    // show typing indicator
     setMessages((prev) => [
       ...prev,
       {
@@ -99,29 +94,26 @@ export default function Chat({ onLocationUpdate, onFormSubmit }: ChatProps) {
       if (locationData.success) {
         prompt = `Analyze the renewable energy potential for coordinates: ${locationData.lat}, ${locationData.lng} (${locationData.formattedAddress}).`;
 
-        // ✅ Trigger parent callback with location
+        // notify parent with location
         onLocationUpdate?.(locationData.lat, locationData.lng);
       }
 
       const advice = await getEnergyAdvice(prompt);
 
       setMessages((prev) => {
-        const filtered = prev.filter((m) => !m.isTyping);
-        return [...filtered, { text: advice, sender: "bot" }];
+        const withoutTyping = prev.filter((m) => !m.isTyping);
+        return [...withoutTyping, { text: advice, sender: "bot" }];
       });
 
-      // ✅ Trigger parent form submit callback (auto expand chat)
+      // notify parent
       onFormSubmit?.();
     } catch (error) {
       console.error("Error in chat:", error);
       setMessages((prev) => {
-        const filtered = prev.filter((m) => !m.isTyping);
+        const withoutTyping = prev.filter((m) => !m.isTyping);
         return [
-          ...filtered,
-          {
-            text: "⚠️ Error fetching energy advice. Please try again.",
-            sender: "bot",
-          },
+          ...withoutTyping,
+          { text: "⚠️ Error fetching advice. Try again.", sender: "bot" },
         ];
       });
     } finally {
@@ -168,7 +160,7 @@ export default function Chat({ onLocationUpdate, onFormSubmit }: ChatProps) {
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyPress={(e) => e.key === "Enter" && handleSend()}
+          onKeyDown={(e) => e.key === "Enter" && handleSend()}
           placeholder="Ask about renewable energy potential..."
         />
         <Button onClick={handleSend}>
