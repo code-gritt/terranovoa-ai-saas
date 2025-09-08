@@ -1,19 +1,19 @@
-import { clsx, type ClassValue } from "clsx";
-import { twMerge } from "tailwind-merge";
+import { clsx, type ClassValue } from 'clsx';
+import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
 export async function geocodeLocation(location: string) {
-  if (typeof window === "undefined") {
-    return { success: false, error: "Geocoding is only available in browser" };
+  if (typeof window === 'undefined') {
+    return { success: false, error: 'Geocoding is only available in browser' };
   }
 
-  const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+  const apiKey = 'AIzaSyC1cMCt9bc2xu2sgUx4Z1pdfZHdm1yEoeE';
   if (!apiKey) {
-    console.error("Google Maps API key not found in environment variables");
-    return { success: false, error: "Google Maps API key not configured" };
+    console.error('Google Maps API key not found in environment variables');
+    return { success: false, error: 'Google Maps API key not configured' };
   }
 
   try {
@@ -21,7 +21,7 @@ export async function geocodeLocation(location: string) {
       `https://maps.googleapis.com/maps/api/geocode/json?address=${encodeURIComponent(
         location
       )}&key=${apiKey}`,
-      { cache: "no-store" }
+      { cache: 'no-store' }
     );
 
     if (!response.ok) {
@@ -30,15 +30,15 @@ export async function geocodeLocation(location: string) {
 
     const data = await response.json();
 
-    if (data.status === "OK" && data.results.length > 0) {
+    if (data.status === 'OK' && data.results.length > 0) {
       const { lat, lng } = data.results[0].geometry.location;
       const formattedAddress = data.results[0].formatted_address;
       return { success: true, lat, lng, formattedAddress };
     } else {
-      return { success: false, error: "Location not found" };
+      return { success: false, error: 'Location not found' };
     }
   } catch (error) {
-    console.error("Geocoding error:", error);
-    return { success: false, error: "Failed to geocode location" };
+    console.error('Geocoding error:', error);
+    return { success: false, error: 'Failed to geocode location' };
   }
 }

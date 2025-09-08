@@ -1,12 +1,12 @@
 // src/server/auth.ts
-import NextAuth, { type NextAuthConfig } from "next-auth";
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
-import { eq } from "drizzle-orm";
-import bcrypt from "bcrypt";
-import Credentials from "next-auth/providers/credentials";
-import { LoginSchema } from "@/types/login-schema";
-import { users } from "./schema";
-import { db } from "./db";
+import NextAuth, { type NextAuthConfig } from 'next-auth';
+import { DrizzleAdapter } from '@auth/drizzle-adapter';
+import { eq } from 'drizzle-orm';
+import bcrypt from 'bcrypt';
+import Credentials from 'next-auth/providers/credentials';
+import { LoginSchema } from '@/types/login-schema';
+import { users } from './schema';
+import { db } from './db';
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db),
@@ -43,11 +43,11 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   pages: {
-    signIn: "/login",
+    signIn: '/login',
   },
-  secret: process.env.NEXTAUTH_SECRET,
+  secret: 'sEvbubcEbI9ealNK/ZhfxyRm1GzcV1tiOZurqgv5h5E=',
   session: {
-    strategy: "jwt",
+    strategy: 'jwt',
   },
   callbacks: {
     async jwt({ token, user }) {

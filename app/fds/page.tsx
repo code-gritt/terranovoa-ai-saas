@@ -1,24 +1,24 @@
-"use client";
+'use client';
 
-import Header from "@/components/Header";
-import ClientWrapper from "@/components/client-wrapper";
-import React from "react";
-import { useState, useEffect, useRef } from "react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Badge } from "@/components/ui/badge";
+import Header from '@/components/Header';
+import ClientWrapper from '@/components/client-wrapper';
+import React from 'react';
+import { useState, useEffect, useRef } from 'react';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
 import {
   AlertDialog,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogHeader,
   AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Loader } from "@googlemaps/js-api-loader";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Separator } from "@/components/ui/separator";
+} from '@/components/ui/alert-dialog';
+import { Loader } from '@googlemaps/js-api-loader';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Separator } from '@/components/ui/separator';
 import {
   MapPin,
   AlertTriangle,
@@ -32,10 +32,10 @@ import {
   Upload,
   Image,
   Camera,
-} from "lucide-react";
+} from 'lucide-react';
 
 interface FloodRiskData {
-  riskLevel: "Low" | "Medium" | "High" | "Very High";
+  riskLevel: 'Low' | 'Medium' | 'High' | 'Very High';
   description: string;
   recommendations: string[];
   elevation: number;
@@ -43,40 +43,36 @@ interface FloodRiskData {
 }
 
 const Fds = () => {
-  const [inputLat, setInputLat] = useState("");
-  const [inputLng, setInputLng] = useState("");
+  const [inputLat, setInputLat] = useState('');
+  const [inputLng, setInputLng] = useState('');
   const [floodRisk, setFloodRisk] = useState<FloodRiskData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [analysisType, setAnalysisType] = useState<"coordinates" | "image">(
-    "coordinates"
+  const [analysisType, setAnalysisType] = useState<'coordinates' | 'image'>(
+    'coordinates'
   );
 
   const [map, setMap] = useState<google.maps.Map | null>(null);
   const [showAlert, setShowAlert] = useState(false);
-  const [alertMessage, setAlertMessage] = useState("");
+  const [alertMessage, setAlertMessage] = useState('');
   const [mapError, setMapError] = useState(false);
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [imagePreview, setImagePreview] = useState<string>("");
-  const [aiAnalysis, setAiAnalysis] = useState<string>("");
+  const [imagePreview, setImagePreview] = useState<string>('');
+  const [aiAnalysis, setAiAnalysis] = useState<string>('');
   const mapRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const API_BASE_URL = "https://flood-analyser.onrender.com";
+  const API_BASE_URL = 'https://flood-analyser.onrender.com';
 
   // Initialize Google Maps
   useEffect(() => {
     const initMap = async () => {
-      const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-      if (!apiKey || apiKey === "YOUR_API_KEY_HERE") {
-        setMapError(true);
-        return;
-      }
+      const apiKey = 'AIzaSyC1cMCt9bc2xu2sgUx4Z1pdfZHdm1yEoeE';
 
       try {
         const google = await new Loader({
           apiKey,
-          version: "weekly",
-          libraries: ["places"],
+          version: 'weekly',
+          libraries: ['places'],
         }).load();
         if (mapRef.current) {
           setMap(
@@ -88,7 +84,7 @@ const Fds = () => {
           );
         }
       } catch (error) {
-        console.error("Error loading Google Maps:", error);
+        console.error('Error loading Google Maps:', error);
         setMapError(true);
       }
     };
@@ -98,11 +94,11 @@ const Fds = () => {
   // API calls
   const callAPI = async (endpoint: string, data: any) => {
     const response = await fetch(`${API_BASE_URL}${endpoint}`, {
-      method: "POST",
-      headers: endpoint.includes("coordinates")
-        ? { "Content-Type": "application/json" }
+      method: 'POST',
+      headers: endpoint.includes('coordinates')
+        ? { 'Content-Type': 'application/json' }
         : {},
-      body: endpoint.includes("coordinates") ? JSON.stringify(data) : data,
+      body: endpoint.includes('coordinates') ? JSON.stringify(data) : data,
     });
     if (!response.ok) throw new Error(`API error: ${response.status}`);
     return response.json();
@@ -111,7 +107,7 @@ const Fds = () => {
   // Analysis handlers
   const handleCoordinateSubmit = async () => {
     if (!inputLat || !inputLng) {
-      setAlertMessage("Please enter both latitude and longitude");
+      setAlertMessage('Please enter both latitude and longitude');
       setShowAlert(true);
       return;
     }
@@ -128,7 +124,7 @@ const Fds = () => {
       lng > 180
     ) {
       setAlertMessage(
-        "Please enter valid coordinates (Lat: -90 to 90, Lng: -180 to 180)"
+        'Please enter valid coordinates (Lat: -90 to 90, Lng: -180 to 180)'
       );
       setShowAlert(true);
       return;
@@ -136,7 +132,7 @@ const Fds = () => {
 
     setIsLoading(true);
     try {
-      const apiResponse = await callAPI("/api/analyze/coordinates", {
+      const apiResponse = await callAPI('/api/analyze/coordinates', {
         latitude: lat,
         longitude: lng,
       });
@@ -148,7 +144,7 @@ const Fds = () => {
         distanceFromWater: apiResponse.distance_from_water,
       };
       setFloodRisk(riskData);
-      setAiAnalysis(apiResponse.ai_analysis || "");
+      setAiAnalysis(apiResponse.ai_analysis || '');
 
       // Update map
       if (map) {
@@ -158,16 +154,16 @@ const Fds = () => {
         new google.maps.Marker({
           position: { lat, lng },
           map,
-          title: "Selected Location",
+          title: 'Selected Location',
         });
         const riskColor =
-          riskData.riskLevel === "Very High"
-            ? "#FF0000"
-            : riskData.riskLevel === "High"
-            ? "#FF6600"
-            : riskData.riskLevel === "Medium"
-            ? "#FFCC00"
-            : "#00FF00";
+          riskData.riskLevel === 'Very High'
+            ? '#FF0000'
+            : riskData.riskLevel === 'High'
+            ? '#FF6600'
+            : riskData.riskLevel === 'Medium'
+            ? '#FFCC00'
+            : '#00FF00';
         new google.maps.Circle({
           strokeColor: riskColor,
           strokeOpacity: 0.8,
@@ -180,9 +176,9 @@ const Fds = () => {
         });
       }
     } catch (error) {
-      console.error("Error analyzing coordinates:", error);
+      console.error('Error analyzing coordinates:', error);
       setAlertMessage(
-        "Error analyzing coordinates. Please check if the backend server is running."
+        'Error analyzing coordinates. Please check if the backend server is running.'
       );
       setShowAlert(true);
     } finally {
@@ -193,11 +189,11 @@ const Fds = () => {
   const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      if (file.size > 10 * 1024 * 1024 || !file.type.startsWith("image/")) {
+      if (file.size > 10 * 1024 * 1024 || !file.type.startsWith('image/')) {
         setAlertMessage(
           file.size > 10 * 1024 * 1024
-            ? "Image size must be less than 10MB"
-            : "Please select a valid image file"
+            ? 'Image size must be less than 10MB'
+            : 'Please select a valid image file'
         );
         setShowAlert(true);
         return;
@@ -211,7 +207,7 @@ const Fds = () => {
 
   const handleImageAnalysis = async () => {
     if (!selectedImage) {
-      setAlertMessage("Please select an image first");
+      setAlertMessage('Please select an image first');
       setShowAlert(true);
       return;
     }
@@ -219,8 +215,8 @@ const Fds = () => {
     setIsLoading(true);
     try {
       const formData = new FormData();
-      formData.append("file", selectedImage);
-      const apiResponse = await callAPI("/api/analyze/image", formData);
+      formData.append('file', selectedImage);
+      const apiResponse = await callAPI('/api/analyze/image', formData);
       const riskData: FloodRiskData = {
         riskLevel: apiResponse.risk_level,
         description: apiResponse.description,
@@ -229,11 +225,11 @@ const Fds = () => {
         distanceFromWater: apiResponse.distance_from_water,
       };
       setFloodRisk(riskData);
-      setAiAnalysis(apiResponse.ai_analysis || "");
+      setAiAnalysis(apiResponse.ai_analysis || '');
     } catch (error) {
-      console.error("Error analyzing image:", error);
+      console.error('Error analyzing image:', error);
       setAlertMessage(
-        "Error analyzing image. Please check if the backend server is running."
+        'Error analyzing image. Please check if the backend server is running.'
       );
       setShowAlert(true);
     } finally {
@@ -243,15 +239,15 @@ const Fds = () => {
 
   // Helper functions
   const getRiskVariant = (riskLevel: string) =>
-    riskLevel === "Very High" || riskLevel === "High"
-      ? "destructive"
-      : riskLevel === "Medium"
-      ? "secondary"
-      : "default";
+    riskLevel === 'Very High' || riskLevel === 'High'
+      ? 'destructive'
+      : riskLevel === 'Medium'
+      ? 'secondary'
+      : 'default';
   const getRiskIcon = (riskLevel: string) =>
-    riskLevel === "Very High" || riskLevel === "High" ? (
+    riskLevel === 'Very High' || riskLevel === 'High' ? (
       <AlertTriangle className="h-4 w-4" />
-    ) : riskLevel === "Medium" ? (
+    ) : riskLevel === 'Medium' ? (
       <Info className="h-4 w-4" />
     ) : (
       <CheckCircle className="h-4 w-4" />
@@ -294,7 +290,7 @@ const Fds = () => {
                       <Tabs
                         value={analysisType}
                         onValueChange={(value) =>
-                          setAnalysisType(value as "coordinates" | "image")
+                          setAnalysisType(value as 'coordinates' | 'image')
                         }
                         className="w-full"
                       >
@@ -430,7 +426,7 @@ const Fds = () => {
                                     <Button
                                       onClick={() => {
                                         setSelectedImage(null);
-                                        setImagePreview("");
+                                        setImagePreview('');
                                       }}
                                       variant="outline"
                                       size="sm"
@@ -479,9 +475,9 @@ const Fds = () => {
                         <div className="flex flex-col items-center justify-center py-12">
                           <Loader2 className="h-8 w-8 animate-spin text-blue-400 mb-4" />
                           <p className="text-gray-400">
-                            {analysisType === "coordinates"
-                              ? "Analyzing coordinates..."
-                              : "Analyzing image..."}
+                            {analysisType === 'coordinates'
+                              ? 'Analyzing coordinates...'
+                              : 'Analyzing image...'}
                           </p>
                         </div>
                       )}

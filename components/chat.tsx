@@ -1,14 +1,14 @@
-"use client";
+'use client';
 
-import { useRef, useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Send, User, Bot } from "lucide-react";
-import { geocodeLocation } from "@/lib/utils";
-import { CohereClient } from "cohere-ai";
-import dynamic from "next/dynamic";
-import ReactMarkdown from "react-markdown";
+import { useRef, useState, useEffect } from 'react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { ScrollArea } from '@/components/ui/scroll-area';
+import { Send, User, Bot } from 'lucide-react';
+import { geocodeLocation } from '@/lib/utils';
+import { CohereClient } from 'cohere-ai';
+import dynamic from 'next/dynamic';
+import ReactMarkdown from 'react-markdown';
 // import createPlotlyComponent from "react-plotly.js/factory";
 // import Plotly from "plotly.js-basic-dist"; // ✅ smaller build
 
@@ -22,12 +22,12 @@ import ReactMarkdown from "react-markdown";
 // );
 
 const cohere = new CohereClient({
-  token: process.env.NEXT_PUBLIC_COHERE_API_KEY || "", // ✅ never hardcode secret
+  token: 'E5fJWZ2J9xQIxccl78UjDvk7pYFs5rBjnLhwwNQ2', // ✅ never hardcode secret
 });
 
 interface Message {
   text: string;
-  sender: "user" | "bot";
+  sender: 'user' | 'bot';
   isTyping?: boolean;
 }
 
@@ -38,31 +38,31 @@ interface ChatProps {
 
 export default function Chat({ onLocationUpdate, onFormSubmit }: ChatProps) {
   const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
+  const [input, setInput] = useState('');
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "smooth" });
+    scrollRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
   async function getEnergyAdvice(prompt: string): Promise<string> {
     try {
       const chatResponse = await cohere.chat({
-        model: "command-r-plus-08-2024",
+        model: 'command-r-plus-08-2024',
         message: prompt,
         chatHistory: [
           {
-            role: "SYSTEM",
+            role: 'SYSTEM',
             message:
-              "You are an Energy Advisor who provides scientifically accurate analyses on renewable energy potential based on historical data.",
+              'You are an Energy Advisor who provides scientifically accurate analyses on renewable energy potential based on historical data.',
           },
         ],
       });
 
-      return chatResponse.text || "No response from model.";
+      return chatResponse.text || 'No response from model.';
     } catch (err) {
-      console.error("Cohere API error:", err);
-      return "⚠️ Error contacting AI service.";
+      console.error('Cohere API error:', err);
+      return '⚠️ Error contacting AI service.';
     }
   }
 
@@ -70,14 +70,14 @@ export default function Chat({ onLocationUpdate, onFormSubmit }: ChatProps) {
     if (!input.trim()) return;
 
     // show user message
-    setMessages((prev) => [...prev, { text: input, sender: "user" }]);
+    setMessages((prev) => [...prev, { text: input, sender: 'user' }]);
 
     // show typing indicator
     setMessages((prev) => [
       ...prev,
       {
-        text: "Analyzing renewable energy potential...",
-        sender: "bot",
+        text: 'Analyzing renewable energy potential...',
+        sender: 'bot',
         isTyping: true,
       },
     ]);
@@ -102,22 +102,22 @@ export default function Chat({ onLocationUpdate, onFormSubmit }: ChatProps) {
 
       setMessages((prev) => {
         const withoutTyping = prev.filter((m) => !m.isTyping);
-        return [...withoutTyping, { text: advice, sender: "bot" }];
+        return [...withoutTyping, { text: advice, sender: 'bot' }];
       });
 
       // notify parent
       onFormSubmit?.();
     } catch (error) {
-      console.error("Error in chat:", error);
+      console.error('Error in chat:', error);
       setMessages((prev) => {
         const withoutTyping = prev.filter((m) => !m.isTyping);
         return [
           ...withoutTyping,
-          { text: "⚠️ Error fetching advice. Try again.", sender: "bot" },
+          { text: '⚠️ Error fetching advice. Try again.', sender: 'bot' },
         ];
       });
     } finally {
-      setInput("");
+      setInput('');
     }
   }
 
@@ -128,17 +128,17 @@ export default function Chat({ onLocationUpdate, onFormSubmit }: ChatProps) {
           <div
             key={idx}
             className={`flex items-start gap-2 ${
-              msg.sender === "user" ? "justify-end" : "justify-start"
+              msg.sender === 'user' ? 'justify-end' : 'justify-start'
             }`}
           >
-            {msg.sender === "bot" && (
+            {msg.sender === 'bot' && (
               <Bot className="w-6 h-6 text-gray-500 mt-1 shrink-0" />
             )}
             <div
               className={`p-3 rounded-lg max-w-[80%] ${
-                msg.sender === "user"
-                  ? "bg-blue-500 text-white"
-                  : "bg-gray-100 text-gray-800"
+                msg.sender === 'user'
+                  ? 'bg-blue-500 text-white'
+                  : 'bg-gray-100 text-gray-800'
               }`}
             >
               <ReactMarkdown>{msg.text}</ReactMarkdown>
@@ -148,7 +148,7 @@ export default function Chat({ onLocationUpdate, onFormSubmit }: ChatProps) {
                 </span>
               )}
             </div>
-            {msg.sender === "user" && (
+            {msg.sender === 'user' && (
               <User className="w-6 h-6 text-blue-500 mt-1 shrink-0" />
             )}
           </div>
@@ -160,7 +160,7 @@ export default function Chat({ onLocationUpdate, onFormSubmit }: ChatProps) {
         <Input
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && handleSend()}
+          onKeyDown={(e) => e.key === 'Enter' && handleSend()}
           placeholder="Ask about renewable energy potential..."
         />
         <Button onClick={handleSend}>

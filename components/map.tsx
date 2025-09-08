@@ -1,15 +1,15 @@
-"use client";
+'use client';
 import {
   useEffect,
   useState,
   useRef,
   forwardRef,
   useImperativeHandle,
-} from "react";
-import { Leaf } from "lucide-react"; // Changed from Zap to Leaf
-import mapboxgl from "mapbox-gl";
-import "mapbox-gl/dist/mapbox-gl.css";
-import Link from "next/link";
+} from 'react';
+import { Leaf } from 'lucide-react'; // Changed from Zap to Leaf
+import mapboxgl from 'mapbox-gl';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import Link from 'next/link';
 
 export interface MapRef {
   setLocation: (lat: number, lng: number) => void;
@@ -35,9 +35,10 @@ const Map = forwardRef<MapRef>((props, ref) => {
   useEffect(() => {
     if (!mapContainer.current) return;
 
-    const mapboxToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN;
+    const mapboxToken =
+      'pk.eyJ1IjoiYWl0ZXN0aW5nbWFwIiwiYSI6ImNtN2Z6eG43djA1dmoyanNoZGlueTNzNncifQ.mYM1JZSm6cB-560f7irULw';
     if (!mapboxToken) {
-      console.error("Mapbox token not found in environment variables");
+      console.error('Mapbox token not found in environment variables');
       return;
     }
 
@@ -45,7 +46,7 @@ const Map = forwardRef<MapRef>((props, ref) => {
 
     map.current = new mapboxgl.Map({
       container: mapContainer.current,
-      style: "mapbox://styles/mapbox/outdoors-v12",
+      style: 'mapbox://styles/mapbox/outdoors-v12',
       center: center,
       zoom: 2,
       attributionControl: false, // Disable default attribution
@@ -60,9 +61,9 @@ const Map = forwardRef<MapRef>((props, ref) => {
     // customAttrib._updateAttributions = () => {} // Override update method to prevent default attributions
     // map.current.addControl(customAttrib, 'bottom-left')
 
-    map.current.addControl(new mapboxgl.NavigationControl(), "top-right");
+    map.current.addControl(new mapboxgl.NavigationControl(), 'top-right');
 
-    map.current.on("load", () => {
+    map.current.on('load', () => {
       setLoading(false);
     });
 
@@ -75,7 +76,7 @@ const Map = forwardRef<MapRef>((props, ref) => {
     <div className="relative w-full h-full">
       <div className="absolute top-4 left-4 z-[1000] bg-background/80 backdrop-blur-sm rounded-lg p-4 shadow-lg border">
         <div className="flex items-center gap-2">
-          <Leaf className="h-6 w-6 text-primary" />{" "}
+          <Leaf className="h-6 w-6 text-primary" />{' '}
           {/* Changed from Zap to Leaf */}
           <Link href="/dashboard">
             <div className="flex flex-col">
@@ -97,5 +98,5 @@ const Map = forwardRef<MapRef>((props, ref) => {
   );
 });
 
-Map.displayName = "Map";
+Map.displayName = 'Map';
 export default Map;
