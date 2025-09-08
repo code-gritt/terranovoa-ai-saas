@@ -1,7 +1,6 @@
 {
-  "/(auth)/api/auth/[...nextauth]/route": "app/(auth)/api/auth/[...nextauth]/route.js",
-  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/page": "app/page.js",
   "/dashboard/page": "app/dashboard/page.js",
-  "/terraloop/page": "app/terraloop/page.js",
-  "/page": "app/page.js"
+  "/(auth)/login/page": "app/(auth)/login/page.js",
+  "/terraloop/page": "app/terraloop/page.js"
 }

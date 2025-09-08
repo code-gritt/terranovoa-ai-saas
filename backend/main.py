@@ -10,7 +10,7 @@ app = FastAPI(title="Terraloop Backend", description="Handles reverse geocoding 
 # Enable CORS for production (update origins to match your frontend domain)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000", "https://your-frontend-domain.onrender.com","https://terranovoa-ai.vercel.app"],  # Add your Render frontend URL
+    allow_origins=["http://localhost:3000", "https://terranovoa-ai-backend.onrender.com","https://terranovoa-ai.vercel.app"],  # Add your Render frontend URL
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

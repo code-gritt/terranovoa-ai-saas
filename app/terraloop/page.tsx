@@ -37,11 +37,14 @@ export default function Terraloop() {
   const handleMapClick = async (lat: number, lng: number) => {
     try {
       setLocationInfo(null);
-      const response = await fetch('http://localhost:8000/reverse-geocode', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ lat, lon: lng }), // ✅ use lng as lon
-      });
+      const response = await fetch(
+        'https://terranovoa-ai-backend.onrender.com/reverse-geocode',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ lat, lon: lng }), // ✅ use lng as lon
+        }
+      );
       const data = await response.json();
       setLocationInfo(data);
     } catch (error) {
